@@ -1,7 +1,11 @@
 // import React from "react";
 import "../styles/App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFingerprint, faWifi } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFingerprint,
+  faWifi,
+  faFeatherAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import qrtest from "../assets/qr-test.svg";
 
 const Profile = () => {
@@ -63,9 +67,10 @@ function Body() {
 function StudentCard() {
   return (
     <>
-      <div className="mt-2 w-full h-48 student-card rounded-lg flex flex-col text-white p-7 font-space-mono">
-        <div className="flex justify-between ">
+      <div className="mt-2 w-full h-48 student-card rounded-lg flex flex-col text-white p-7 font-space-mono ">
+        <div className="flex gap-4 align-middle items-center ">
           <FontAwesomeIcon icon={faFingerprint} className="text-xl" />
+          <FontAwesomeIcon icon={faFeatherAlt} className="text-lg" />
           <FontAwesomeIcon icon={faWifi} className="rotate-90 " />
         </div>
         <div className="flex w-full align-middle items-center justify-between">
