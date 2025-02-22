@@ -40,14 +40,27 @@ function Body() {
     <div className=" flex gap-4 px-8 py-4 align-start items-start">
       <div className="w-full">
         <div className="flex gap-4 ">
-          <div className="border p-5 w-1/2 border-gray-200 rounded-lg bg-gray-50 text-gray-400">
-            Card
+          <div className="border border-gray-200 rounded-lg bg-gray-50 text-gray-400 flex justify-between items-center px-4 py-2 flex-1">
+            <div className="text-sm mr-2">Exp</div>
+            <div className="text-lime-700">1249.00pt</div>
           </div>
-          <div className="border p-5 w-1/4 border-gray-200 rounded-lg">
-            Card
+          <div className="border px-4 py-2 w-full border-gray-200 rounded-lg bg-gray-50 text-gray-400 flex justify-between">
+            <div className="flex gap-2 align-middle items-center">
+              <div className="text-sm">Rank</div>
+              <div className="text-indigo-600">Exclusive</div>
+            </div>
+            <div className="flex gap-2 align-middle items-center">
+              <div className="text-sm">School-wide</div>
+              <div className="text-indigo-600"># 10</div>
+            </div>
+            <div className="flex gap-2 align-middle items-center">
+              <div className="text-sm">Class-wide</div>
+              <div className="text-amber-600"># 1</div>
+            </div>
           </div>
-          <div className="border p-5 w-1/4 border-gray-200 rounded-lg">
-            Card
+          <div className="border px-4 py-2  border-gray-200 rounded-lg bg-gray-50 text-gray-400 flex justify-between items-center">
+            <div className="text-sm mr-2">State</div>
+            <div className="p-2 bg-emerald-700 rounded-full"></div>
           </div>
         </div>
         <div className="border p-5 w-full mt-4 border-gray-200 rounded-lg bg-gray-50 text-gray-400">
@@ -65,7 +78,10 @@ function Body() {
             Achievement
             <AchievementCard />
           </div>
-          <div className="border p-5 border-gray-200 rounded-lg">Card</div>
+          <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-sm">
+            <div className="mb-2">Activity log</div>
+            <ActivityLog />
+          </div>
         </div>
       </div>
     </div>
@@ -200,6 +216,43 @@ function AchievementCard() {
         alt="baby"
         className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg"
       />
+    </div>
+  );
+}
+
+const weeks = 7; // Number of weeks to show
+const daysPerWeek = 7; // Days in a week
+
+// Mock contribution data (0 = no activity, 4 = max activity)
+const generateMockData = () => {
+  return Array.from(
+    { length: weeks * daysPerWeek },
+    () => Math.floor(Math.random() * 5) // Random activity level (0-4)
+  );
+};
+
+const activityLevels = generateMockData();
+
+const colorMap = [
+  "bg-white", // Level 2 (Medium activity)
+  "bg-indigo-200", // Level 1 (Low activity)
+  "bg-indigo-400", // Level 2 (Medium activity)
+  "bg-indigo-600", // Level 3 (High activity)
+  "bg-indigo-800", // Level 4 (Max activity)
+];
+
+function ActivityLog() {
+  return (
+    <div className="p-4 rounded-lg border border-gray-200 bg-white">
+      <div className="grid grid-cols-20 gap-1">
+        {activityLevels.map((level, index) => (
+          <div
+            key={index}
+            className={`w-3 h-3 ${colorMap[level]} rounded border border-indigo-200`}
+            title={`Contributions: ${level}`}
+          ></div>
+        ))}
+      </div>
     </div>
   );
 }
