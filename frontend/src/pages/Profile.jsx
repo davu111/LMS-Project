@@ -11,6 +11,7 @@ import avt from "../assets/avt.jpeg";
 import a02 from "../assets/achivement/a02.svg";
 import a01 from "../assets/achivement/a01.svg";
 import a03 from "../assets/achivement/a03.svg";
+import logoSchool from "../assets/logo-school.svg";
 
 const Profile = () => {
   return (
@@ -27,9 +28,14 @@ function Header() {
       <div className="text-2xl font-bold font-raleway text-indigo-700 tracking-widest">
         Profile
       </div>
-      <div className="border flex ">
-        <div className="px-10 bg-amber-100"> stage bar </div>
-        <div className="p-3 rounded-full bg-amber-400"></div>
+      <div className="flex gap-2 align-middle items-center text-indigo-700">
+        <img
+          src={logoSchool}
+          alt="Logo"
+          className="w-8 h-8 border rounded-full"
+        />
+
+        <div className="font-raleway tracking-widest">Mist High School</div>
       </div>
     </header>
   );
@@ -234,7 +240,7 @@ const generateMockData = () => {
 const activityLevels = generateMockData();
 
 const colorMap = [
-  "bg-white", // Level 2 (Medium activity)
+  "bg-gray-50", // Level 2 (Medium activity)
   "bg-indigo-200", // Level 1 (Low activity)
   "bg-indigo-400", // Level 2 (Medium activity)
   "bg-indigo-600", // Level 3 (High activity)
@@ -248,7 +254,7 @@ function ActivityLog() {
         {activityLevels.map((level, index) => (
           <div
             key={index}
-            className={`w-3 h-3 ${colorMap[level]} rounded border border-indigo-200`}
+            className={`w-3 h-3 ${colorMap[level]} rounded border border-gray-200`}
             title={`Contributions: ${level}`}
           ></div>
         ))}
