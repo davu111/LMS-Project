@@ -56,6 +56,26 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8222c3",endColorstr="#fd7b2d",GradientType=1);
 }
 
+.student-card-2 {
+  background: rgb(130, 34, 195);
+  background: -moz-linear-gradient(
+    146deg,
+    rgba(130, 34, 195, 0.9822522759103641) 0%,
+    rgba(45, 253, 46, 0.9486388305322129) 100%
+  );
+  background: -webkit-linear-gradient(
+    146deg,
+    rgba(130, 34, 195, 0.9822522759103641) 0%,
+    rgba(45, 253, 46, 0.9486388305322129) 100%
+  );
+  background: linear-gradient(
+    146deg,
+    rgba(130, 34, 195, 0.9822522759103641) 0%,
+    rgba(45, 253, 46, 0.9486388305322129) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8222c3",endColorstr="#2dfd2e",GradientType=1);
+}
+
 /* 
 #root {
   max-width: 1280px;

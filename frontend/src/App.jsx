@@ -3,6 +3,8 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
+import Ranking from "./pages/Ranking";
+import Class from "./pages/Class";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/ranking" element={<Ranking />} />
+            <Route path="/class" element={<Class />} />
           </Routes>
         </div>
       </div>

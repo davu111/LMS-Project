@@ -9,6 +9,8 @@ import {
   faInfoCircle,
   faSignOutAlt,
   faChalkboardTeacher,
+  faBookmark,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
@@ -24,7 +26,7 @@ const Navbar = () => {
             <ul className="flex flex-col w-full gap-1">
               <li>
                 <Link
-                  to="/about"
+                  to="/class"
                   className="flex w-full py-2 px-3 rounded-full hover:bg-gray-100 align-middle items-center"
                 >
                   <div className="flex items-center pl-1 pr-4">
@@ -47,7 +49,7 @@ const Navbar = () => {
               </li>
               <li>
                 <Link
-                  to="/"
+                  to="/ranking"
                   className=" flex w-full py-2 px-3 rounded-full hover:bg-gray-100 align-middle items-center"
                 >
                   <div className="flex items-center pl-1 pr-4">
@@ -68,14 +70,24 @@ const Navbar = () => {
             <ul className="flex flex-col w-full gap-1">
               <li>
                 <Link
-                  to="/profile"
-                  className=" flex w-full py-2 px-3 rounded-full hover:bg-gray-100  align-middle items-center"
+                  to="/about"
+                  className="flex w-full py-2 px-3 rounded-full hover:bg-gray-100  align-middle items-center"
+                >
+                  <div className="flex items-center pl-1 pr-5">
+                    <FontAwesomeIcon icon={faBookmark} />
+                  </div>
+                  <div className="flex items-center ">Save</div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="flex w-full py-2 px-3 rounded-full hover:bg-gray-100  align-middle items-center"
                 >
                   <div className="flex items-center pl-1 pr-4">
-                    <FontAwesomeIcon icon={faMoneyCheck} />
+                    <FontAwesomeIcon icon={faBook} />
                   </div>
-
-                  <div className="flex items-center ">Profile</div>
+                  <div className="flex items-center ">Assignment</div>
                 </Link>
               </li>
               <li>
@@ -87,6 +99,18 @@ const Navbar = () => {
                     <FontAwesomeIcon icon={faChartBar} />
                   </div>
                   <div className="flex items-center ">Status</div>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/profile"
+                  className=" flex w-full py-2 px-3 rounded-full hover:bg-gray-100  align-middle items-center"
+                >
+                  <div className="flex items-center pl-1 pr-4">
+                    <FontAwesomeIcon icon={faMoneyCheck} />
+                  </div>
+
+                  <div className="flex items-center ">Profile</div>
                 </Link>
               </li>
             </ul>
