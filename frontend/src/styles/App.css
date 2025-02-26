@@ -1,9 +1,9 @@
-@import "tailwindcss";
-
 @import url("https://fonts.googleapis.com/css2?family=Merienda:wght@300..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 
 @import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+@import "tailwindcss";
 
 .text-logo {
   font-family: "Merienda", cursive;
@@ -19,24 +19,6 @@
 }
 
 .student-card {
-  /* background: rgb(130, 34, 195);
-  background: -moz-linear-gradient(
-    146deg,
-    rgba(130, 34, 195, 1) 0%,
-    rgba(253, 123, 45, 0.8898153011204482) 95%
-  );
-  background: -webkit-linear-gradient(
-    146deg,
-    rgba(130, 34, 195, 1) 0%,
-    rgba(253, 123, 45, 0.8898153011204482) 95%
-  );
-  background: linear-gradient(
-    146deg,
-    rgba(130, 34, 195, 1) 0%,
-    rgba(253, 123, 45, 0.8898153011204482) 95%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8222c3",endColorstr="#fd7b2d",GradientType=1); */
-
   background: rgb(130, 34, 195);
   background: -moz-linear-gradient(
     146deg,
@@ -54,26 +36,6 @@
     rgba(253, 123, 45, 0.9486388305322129) 100%
   );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8222c3",endColorstr="#fd7b2d",GradientType=1);
-}
-
-.student-card-2 {
-  background: rgb(130, 34, 195);
-  background: -moz-linear-gradient(
-    146deg,
-    rgba(130, 34, 195, 0.9822522759103641) 0%,
-    rgba(45, 253, 46, 0.9486388305322129) 100%
-  );
-  background: -webkit-linear-gradient(
-    146deg,
-    rgba(130, 34, 195, 0.9822522759103641) 0%,
-    rgba(45, 253, 46, 0.9486388305322129) 100%
-  );
-  background: linear-gradient(
-    146deg,
-    rgba(130, 34, 195, 0.9822522759103641) 0%,
-    rgba(45, 253, 46, 0.9486388305322129) 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8222c3",endColorstr="#2dfd2e",GradientType=1);
 }
 
 /* 

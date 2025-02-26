@@ -46,11 +46,11 @@ function Body() {
     <div className=" flex gap-4 px-8 py-4 align-start items-start">
       <div className="w-full">
         <div className="flex gap-4 ">
-          <div className="border border-gray-200 rounded-lg bg-gray-50 text-gray-400 flex justify-between items-center px-4 py-2 flex-1">
+          <div className="border border-gray-200 rounded-lg bg-gray-100 text-gray-400 flex justify-between items-center px-4 py-2 flex-1">
             <div className="text-sm mr-2">AXP</div>
             <div className="text-lime-700">1249.00xp</div>
           </div>
-          <div className="border px-4 py-2 w-full border-gray-200 rounded-lg bg-gray-50 text-gray-400 flex justify-between">
+          <div className="border px-4 py-2 w-full border-gray-200 rounded-lg bg-gray-100 text-gray-400 flex justify-between">
             <div className="flex gap-2 align-middle items-center">
               <div className="text-sm">Rank</div>
               <div className="text-indigo-600">Merit </div>
@@ -64,28 +64,28 @@ function Body() {
               <div className="text-amber-600"># 1</div>
             </div>
           </div>
-          <div className="border px-4 py-2  border-gray-200 rounded-lg bg-gray-50 text-gray-400 flex justify-between items-center">
+          <div className="border px-4 py-2  border-gray-200 rounded-lg bg-gray-100 text-gray-400 flex justify-between items-center">
             <div className="text-sm mr-2">State</div>
             <div className="p-2 bg-emerald-700 rounded-full"></div>
           </div>
         </div>
-        <div className="border p-5 w-full mt-4 border-gray-200 rounded-lg bg-gray-50 text-gray-400">
+        <div className="border p-5 w-full mt-4 border-gray-200 rounded-lg bg-gray-100 text-gray-400 shadow-xs">
           Profile
           <ProfileSection />
         </div>
       </div>
       <div className=" w-3/5">
         <div className="flex flex-col gap-4">
-          <div className="border px-3 py-5 border-gray-200 rounded-lg text-sm bg-gray-50">
+          <div className="border px-3 py-5 border-gray-200 rounded-lg text-sm bg-gray-100">
             <div className="mb-4 text-gray-400">Student Card</div>
             <StudentCard />
           </div>
 
-          <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-sm">
+          <div className="border p-5 border-gray-200 rounded-lg bg-gray-100 text-gray-400 text-sm">
             Achievement
             <AchievementCard />
           </div>
-          <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-sm">
+          <div className="border p-5 border-gray-200 rounded-lg bg-gray-100 text-gray-400 text-sm">
             <div className="mb-2">Activity log</div>
             <ActivityLog />
           </div>
@@ -98,7 +98,7 @@ function Body() {
 function StudentCard() {
   return (
     <>
-      <div className="mt-2 w-full h-48 student-card rounded-lg flex flex-col text-white p-7 font-space-mono shadow-sm">
+      <div className="mt-2 w-full h-48 student-card rounded-lg flex flex-col text-white p-7 font-space-mono shadow hover:shadow-xl transition duration-300">
         <div className="flex gap-4 align-middle items-center ">
           <FontAwesomeIcon icon={faFingerprint} className="text-xl" />
           <FontAwesomeIcon icon={faFeatherAlt} className="text-lg" />
@@ -107,7 +107,7 @@ function StudentCard() {
         <div className="flex w-full align-middle items-center justify-between">
           <div className="flex flex-col mt-4 mb-4">
             <div className="text-gray-300 text-xs">ID</div>
-            <div className=" text-xl tracking-widest">440126</div>
+            <div className=" text-xl tracking-widest ">440126</div>
           </div>
           <img src={qrtest} alt="Logo" className="w-15 h-12 " />
         </div>
@@ -211,17 +211,17 @@ function AchievementCard() {
       <img
         src={a02}
         alt="baby"
-        className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg"
+        className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg hover:drop-shadow-3xl transition duration-300 hover:scale-105"
       />
       <img
         src={a01}
         alt="baby"
-        className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg"
+        className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg hover:drop-shadow-3xl transition duration-300 hover:scale-105"
       />
       <img
         src={a03}
         alt="baby"
-        className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg"
+        className="w-16 h-16 rounded-full border p-2 border-gray-300 drop-shadow-lg hover:drop-shadow-3xl transition duration-300 hover:scale-105"
       />
     </div>
   );
