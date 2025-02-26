@@ -5,6 +5,7 @@ import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Ranking from "./pages/Ranking";
 import Class from "./pages/Class";
+import Subject from "./pages/Subject";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/class" element={<Class />} />
+            <Route path="/subject" element={<Subject />} />
           </Routes>
         </div>
       </div>

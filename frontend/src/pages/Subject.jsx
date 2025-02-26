@@ -2,126 +2,17 @@ import "../styles/App.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faFingerprint,
-  faClock,
   faSort,
   faBroadcastTower,
   faGlobe,
   faCheckDouble,
   faPastafarianism,
+  faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 
 import logoSchool from "../assets/logo-school.svg";
 
-const subjects = [
-  {
-    name: "Mathematics",
-    color: "amber",
-    exp: 3000,
-    grade: "A+",
-  },
-  {
-    name: "History",
-    color: "pink",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Mandarin",
-    color: "cyan",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Literature",
-    color: "emerald",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Physics",
-    color: "red",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Chemistry",
-    color: "blue",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Biology",
-    color: "amber",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Physics",
-    color: "red",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Chemistry",
-    color: "blue",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Biology",
-    color: "amber",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Physics",
-    color: "red",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Chemistry",
-    color: "blue",
-    exp: 5000,
-    grade: "A+",
-  },
-  {
-    name: "Biology",
-    color: "amber",
-    exp: 5000,
-    grade: "A+",
-  },
-];
-
-const colorClasses = {
-  amber: {
-    bg: "bg-amber-600",
-    text: "text-amber-600",
-  },
-  pink: {
-    bg: "bg-pink-600",
-    text: "text-pink-600",
-  },
-  cyan: {
-    bg: "bg-cyan-600",
-    text: "text-cyan-600",
-  },
-  emerald: {
-    bg: "bg-emerald-600",
-    text: "text-emerald-600",
-  },
-  red: {
-    bg: "bg-red-600",
-    text: "text-red-600",
-  },
-  blue: {
-    bg: "bg-blue-600",
-    text: "text-blue-600",
-  },
-};
-
-function Class() {
+function Subject() {
   return (
     <>
       <Header />
@@ -134,7 +25,7 @@ function Header() {
   return (
     <header className="border border-gray-200 h-24 px-8 flex justify-between border-t-0 border-l-0 border-r-0 sticky top-0 bg-white z-10 align-middle items-center">
       <div className="text-2xl font-bold font-raleway text-indigo-700 tracking-widest">
-        Class
+        Mathematics
       </div>
       <div className="flex gap-2 align-middle items-center text-indigo-700">
         <img
@@ -163,18 +54,65 @@ function Body() {
 }
 
 function LeftSection() {
+  const assignments = [
+    { id: 1, date: "1 day ago", title: "Title" },
+    { id: 2, date: "1 day ago", title: "Title" },
+    { id: 3, date: "1 day ago", title: "Title" },
+    { id: 4, date: "1 day ago", title: "Title" },
+    { id: 5, date: "1 day ago", title: "Title" },
+    { id: 6, date: "1 day ago", title: "Title" },
+    { id: 7, date: "1 day ago", title: "Title" },
+    { id: 8, date: "1 day ago", title: "Title" },
+    { id: 9, date: "1 day ago", title: "Title" },
+    { id: 10, date: "1 day ago", title: "Title" },
+  ];
+
   return (
-    <div className="border py-4 border-gray-200 rounded-lg bg-gray-50 flex justify-center items-center flex-col">
-      <div className="flex gap-4 flex-wrap justify-center">
-        {subjects.map((subject, index) => (
-          <SubjectCard
-            key={index}
-            name={subject.name}
-            color={subject.color}
-            exp={subject.exp}
-            grade={subject.grade}
-          />
-        ))}
+    <div className="flex flex-col gap-4">
+      <div className="border p-6 border-gray-300 rounded-lg flex justify-center items-center flex-col bg-gray-50"></div>
+      <div className="border p-6 border-gray-300 rounded-lg bg-gray-50 flex flex-col gap-2">
+        <div className="text-sm text-gray-400">Assignments</div>
+        <div className="flex flex-wrap items-center justify-start gap-5">
+          {assignments.map((assignment) => (
+            <div
+              key={assignment.id}
+              className="bg-white p-4 rounded-lg shadow-md min-w-56 max-w-56 flex flex-col gap-2 
+              hover:shadow-xl transition-all duration-300 border border-transparent 
+              hover:border-indigo-500 hover:scale-105"
+            >
+              <div className="flex items-center justify-between text-sm">
+                <div className="text-gray-400 text-xs">{assignment.date}</div>
+                <div className="flex gap-2 items-center text-gray-400 border rounded px-2 py-1 text-xs hover:border-indigo-600 cursor-pointer transition duration-300 hover:text-indigo-600">
+                  <div>Save</div>
+                  <FontAwesomeIcon icon={faBookmark} />
+                </div>
+              </div>
+              <div className="font-medium">{assignment.title}</div>
+              <div className="text-xs inline-flex gap-2">
+                <div className=" px-2 py-1 bg-rose-200 rounded-full text-rose-500">
+                  Math
+                </div>
+                <div className=" px-2 py-1 bg-emerald-200 rounded-full text-emerald-500">
+                  MCQ
+                </div>
+              </div>
+              <hr className="text-gray-300 my-2" />
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex gap-0 items-start flex-col">
+                  <div className="text-sm font-medium">18/02/2024</div>
+                  <div className="text-gray-400">08:00 AM</div>
+                </div>
+
+                <div
+                  className=" cursor-pointer border border-indigo-600 text-indigo-600 px-2 py-1 rounded-lg text-xs hover:bg-indigo-600 hover:text-white transition duration-300
+                "
+                >
+                  View Details
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -238,30 +176,6 @@ function SemesterCard() {
   );
 }
 
-function SubjectCard({ name, color, exp, grade }) {
-  const { bg, text } = colorClasses[color] || {
-    bg: "bg-gray-400",
-    text: "text-gray-400",
-  };
-
-  return (
-    <Link to="/subject">
-      <div className="p-4 bg-white shadow-md rounded-lg flex gap-4 flex-col justify-items-start items-start min-w-56 hover:shadow-xl transition duration-300 cursor-pointer">
-        <div
-          className={`w-8 h-8 ${bg} rounded-full flex justify-center items-center`}
-        ></div>
-
-        <div className={`font-medium ${text}`}>{name}</div>
-
-        <div className="flex justify-between w-full text-sm text-gray-400">
-          <div>Exp: {exp}xp</div>
-          <div>{grade}</div>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 function NewAnnouncementsCard() {
   return (
     <div className="bg-white flex flex-col w-full text-sm rounded-lg shadow-md p-4 gap-4">
@@ -309,4 +223,4 @@ function NewAnnouncementsCard() {
   );
 }
 
-export default Class;
+export default Subject;
