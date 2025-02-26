@@ -8,6 +8,11 @@ import {
   faCheckDouble,
   faPastafarianism,
   faBookmark,
+  faBriefcase,
+  faBookOpen,
+  faBell,
+  faPersonBooth,
+  faChartPie,
 } from "@fortawesome/free-solid-svg-icons";
 
 import logoSchool from "../assets/logo-school.svg";
@@ -69,9 +74,29 @@ function LeftSection() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="border p-6 border-gray-300 rounded-lg flex justify-center items-center flex-col bg-gray-50"></div>
-      <div className="border p-6 border-gray-300 rounded-lg bg-gray-50 flex flex-col gap-2">
-        <div className="text-sm text-gray-400">Assignments</div>
+      <div className=" p-2  border-gray-300 rounded-lg flex justify-center items-center bg-gray-50 h-12 shadow-inner">
+        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
+          <FontAwesomeIcon icon={faBell} />
+          <div>Announcements</div>
+        </div>
+        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
+          <FontAwesomeIcon icon={faBookOpen} />
+          <div>Lessons</div>
+        </div>
+        <div className="text-sm text-gray-600 h-full bg-white  rounded-lg px-4 flex items-center drop-shadow-md shadow  gap-2">
+          <FontAwesomeIcon icon={faBriefcase} />
+          <div>Assignments</div>
+        </div>
+        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
+          <FontAwesomeIcon icon={faPersonBooth} />
+          <div>My notebook</div>
+        </div>
+        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
+          <FontAwesomeIcon icon={faChartPie} />
+          <div>Statistics</div>
+        </div>
+      </div>
+      <div className="shadow-inner p-6 rounded-lg bg-gray-50 flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-start gap-5">
           {assignments.map((assignment) => (
             <div
@@ -121,13 +146,13 @@ function LeftSection() {
 function RightSection() {
   return (
     <div className="flex flex-col gap-4">
-      <div className="border px-3 py-5 border-gray-200 rounded-lg text-sm bg-gray-50">
+      <div className=" px-3 py-5 rounded-lg text-sm bg-gray-50 shadow-inner">
         <SemesterCard />
       </div>
-      <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 flex flex-col gap-2">
+      <div className=" p-5  rounded-lg bg-gray-50 flex flex-col gap-2 shadow-inner">
         <NewAnnouncementsCard />
       </div>
-      <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-sm">
+      <div className=" p-5  rounded-lg bg-gray-50 text-gray-400 text-sm shadow-inner">
         <div className="mb-2 ">Exam schedule (optional) </div>
       </div>
     </div>

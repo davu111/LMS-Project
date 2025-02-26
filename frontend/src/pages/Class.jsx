@@ -164,7 +164,7 @@ function Body() {
 
 function LeftSection() {
   return (
-    <div className="border py-4 border-gray-200 rounded-lg bg-gray-50 flex justify-center items-center flex-col">
+    <div className=" py-4 border-gray-200 rounded-lg bg-gray-50 flex justify-center items-center flex-col shadow-inner">
       <div className="flex gap-4 flex-wrap justify-center">
         {subjects.map((subject, index) => (
           <SubjectCard
@@ -246,7 +246,10 @@ function SubjectCard({ name, color, exp, grade }) {
 
   return (
     <Link to="/subject">
-      <div className="p-4 bg-white shadow-md rounded-lg flex gap-4 flex-col justify-items-start items-start min-w-56 hover:shadow-xl transition duration-300 cursor-pointer">
+      <div
+        className="p-4 bg-white shadow-md rounded-lg flex gap-4 flex-col justify-items-start items-start min-w-56 hover:shadow-xl transition duration-300 cursor-pointer border border-transparent 
+               hover:scale-105"
+      >
         <div
           className={`w-8 h-8 ${bg} rounded-full flex justify-center items-center`}
         ></div>
