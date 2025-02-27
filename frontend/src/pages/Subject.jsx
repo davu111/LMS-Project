@@ -96,7 +96,9 @@ function Tabs() {
 
             <div
               className={`relative flex items-center gap-2 z-10 ${
-                tab === item.id ? "text-indigo-700" : "text-gray-400"
+                tab === item.id
+                  ? "text-indigo-700 transition duration-400"
+                  : "text-gray-400"
               }`}
             >
               <FontAwesomeIcon icon={item.icon} />
