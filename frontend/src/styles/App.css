@@ -38,6 +38,11 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#8222c3",endColorstr="#fd7b2d",GradientType=1);
 }
 
+.announcements-container {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
 /* 
 #root {
   max-width: 1280px;
