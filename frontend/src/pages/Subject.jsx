@@ -1,5 +1,8 @@
 import "../styles/App.css";
+import { motion } from "framer-motion";
+
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSort,
@@ -58,6 +61,47 @@ function Body() {
   );
 }
 
+const tabs = [
+  { id: "announcements", icon: faBell, label: "Announcements" },
+  { id: "lessons", icon: faBookOpen, label: "Lessons" },
+  { id: "assignments", icon: faBriefcase, label: "Assignments" },
+  { id: "notebook", icon: faPersonBooth, label: "My Notebook" },
+  { id: "statistics", icon: faChartPie, label: "Statistics" },
+];
+
+function Tabs() {
+  const [selectedTab, setSelectedTab] = useState("assignments");
+
+  return (
+    <div className="relative p-2 border-gray-300 rounded-lg flex justify-between items-center bg-gray-50 h-12 shadow-inner">
+      {tabs.map((tab) => (
+        <div
+          key={tab.id}
+          onClick={() => setSelectedTab(tab.id)}
+          className="relative text-sm h-full w-full rounded-lg px-4 flex items-center gap-2 cursor-pointer justify-center "
+        >
+          {selectedTab === tab.id && (
+            <motion.div
+              layoutId="active-tab"
+              className="absolute inset-0 bg-white rounded-lg drop-shadow-md shadow"
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            />
+          )}
+
+          <div
+            className={`relative flex items-center gap-2 z-10 ${
+              selectedTab === tab.id ? "text-indigo-700" : "text-gray-400"
+            }`}
+          >
+            <FontAwesomeIcon icon={tab.icon} />
+            <div>{tab.label}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function LeftSection() {
   const assignments = [
     { id: 1, date: "1 day ago", title: "Title" },
@@ -74,28 +118,7 @@ function LeftSection() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className=" p-2  border-gray-300 rounded-lg flex justify-center items-center bg-gray-50 h-12 shadow-inner">
-        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
-          <FontAwesomeIcon icon={faBell} />
-          <div>Announcements</div>
-        </div>
-        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
-          <FontAwesomeIcon icon={faBookOpen} />
-          <div>Lessons</div>
-        </div>
-        <div className="text-sm text-gray-600 h-full bg-white  rounded-lg px-4 flex items-center drop-shadow-md shadow  gap-2">
-          <FontAwesomeIcon icon={faBriefcase} />
-          <div>Assignments</div>
-        </div>
-        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
-          <FontAwesomeIcon icon={faPersonBooth} />
-          <div>My notebook</div>
-        </div>
-        <div className="text-sm text-gray-400 h-full rounded-lg px-4 flex items-center gap-2">
-          <FontAwesomeIcon icon={faChartPie} />
-          <div>Statistics</div>
-        </div>
-      </div>
+      <Tabs />
       <div className="shadow-inner p-6 rounded-lg bg-gray-50 flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-start gap-5">
           {assignments.map((assignment) => (
