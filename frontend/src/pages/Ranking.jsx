@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import "../styles/App.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from 'react';
+import '../styles/App.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCalendarDay,
   faCaretDown,
   faUserTag,
   faSearch,
   faVial,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
-import logoSchool from "../assets/logo-school.svg";
+import logoSchool from '../assets/logo-school.svg';
 
 const Ranking = () => {
   return (
@@ -27,11 +27,7 @@ function Header() {
         Ranking
       </div>
       <div className="flex gap-2 align-middle items-center text-indigo-700">
-        <img
-          src={logoSchool}
-          alt="Logo"
-          className="w-8 h-8 border rounded-full"
-        />
+        <img src={logoSchool} alt="Logo" className="w-8 h-8 border rounded-full" />
         <div className="font-raleway tracking-widest">Mist High School</div>
       </div>
     </header>
@@ -42,36 +38,36 @@ function Body() {
   const currentStudentId = 1; // Example student ID for the current account
 
   const [rankings, setRankings] = useState([
-    { id: 1, name: "John Doe", movement: "+3" },
-    { id: 2, name: "Jane Smith", movement: "-1" },
-    { id: 3, name: "Alice Johnson", movement: "+20" },
-    { id: 4, name: "Bob Brown", movement: "-2" },
-    { id: 5, name: "Mike Williams", movement: "+5" },
-    { id: 6, name: "Sara Davis", movement: "-4" },
-    { id: 7, name: "Paul Wilson", movement: "+2" },
-    { id: 8, name: "Linda Moore", movement: "-3" },
-    { id: 9, name: "Chris Taylor", movement: "+1" },
-    { id: 10, name: "Mark Thomas", movement: "+4" },
-    { id: 11, name: "**** ****", movement: "*" },
-    { id: 54, name: "Vu Minh Quy", movement: "+16" },
-    { id: 55, name: "**** ****", movement: "*" },
+    { id: 1, name: 'John Doe', movement: '+3' },
+    { id: 2, name: 'Jane Smith', movement: '-1' },
+    { id: 3, name: 'Alice Johnson', movement: '+20' },
+    { id: 4, name: 'Bob Brown', movement: '-2' },
+    { id: 5, name: 'Mike Williams', movement: '+5' },
+    { id: 6, name: 'Sara Davis', movement: '-4' },
+    { id: 7, name: 'Paul Wilson', movement: '+2' },
+    { id: 8, name: 'Linda Moore', movement: '-3' },
+    { id: 9, name: 'Chris Taylor', movement: '+1' },
+    { id: 10, name: 'Mark Thomas', movement: '+4' },
+    { id: 11, name: '**** ****', movement: '*' },
+    { id: 54, name: 'Vu Minh Quy', movement: '+16' },
+    { id: 55, name: '**** ****', movement: '*' },
   ]);
 
   const [axpRankings, setAxpRankings] = useState([
-    { id: 1, name: "John Doe", movement: "+3" },
-    { id: 2, name: "Jane Smith", movement: "-1" },
+    { id: 1, name: 'John Doe', movement: '+3' },
+    { id: 2, name: 'Jane Smith', movement: '-1' },
   ]);
 
   const [classRankings, setClassRankings] = useState([
-    { id: 1, name: "11A", movement: "-" },
-    { id: 2, name: "11C", movement: "+1" },
-    { id: 3, name: "11B", movement: "-1" },
-    { id: 4, name: "11D", movement: "+2" },
+    { id: 1, name: '11A', movement: '-' },
+    { id: 2, name: '11C', movement: '+1' },
+    { id: 3, name: '11B', movement: '-1' },
+    { id: 4, name: '11D', movement: '+2' },
   ]);
 
   const [legendRankings, setLegendRankings] = useState([
-    { id: 1, name: "Mike Williams" },
-    { id: 2, name: "Sara Davis" },
+    { id: 1, name: 'Mike Williams' },
+    { id: 2, name: 'Sara Davis' },
   ]);
 
   const renderTable = (data) => (
@@ -95,9 +91,7 @@ function Body() {
             <td className="py-2 px-4 border-b border-gray-200 text-center">
               {index + 1}
             </td>
-            <td className="py-2 px-4 border-b border-gray-200">
-              {student.name}
-            </td>
+            <td className="py-2 px-4 border-b border-gray-200">{student.name}</td>
             <td className="py-2 px-4 border-b border-gray-200 text-center">
               {student.movement}
             </td>

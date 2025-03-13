@@ -16,7 +16,7 @@ import logoSchool from "../assets/logo-school.svg";
 const Profile = () => {
   return (
     <>
-      <Header />
+      <Header/>
       <Body />
     </>
   );

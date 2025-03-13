@@ -1,0 +1,214 @@
+[
+    {
+      "id": 1,
+      "name": "Math Homework",
+      "grade": "Grade 10",
+      "subject": "Mathematics",
+      "year": "2024.2",
+      "type": "MC",
+      "duration": "15 minutes",
+      "status": "Not yet"
+    },
+    {
+      "id": 2,
+      "name": "Science Project",
+      "grade": "Grade 11",
+      "subject": "Biology",
+      "year": "2023.2",
+      "type": "Essay",
+      "duration": "30 minutes",
+      "status": "Not yet"
+    },
+    {
+      "id": 3,
+      "name": "Literature Analysis",
+      "grade": "Grade 12",
+      "subject": "Literature",
+      "year": "2023.1",
+      "type": "MC",
+      "duration": "Middle Term",
+      "status": "Completed"
+    },
+    {
+      "id": 4,
+      "name": "Physics Quiz",
+      "grade": "Grade 10",
+      "subject": "Physics",
+      "year": "2024.1",
+      "type": "MC",
+      "duration": "15 minutes",
+      "status": "Not yet"
+    },
+    {
+      "id": 5,
+      "name": "Geography Test",
+      "grade": "Grade 11",
+      "subject": "Geography",
+      "year": "2022.2",
+      "type": "Essay",
+      "duration": "Final Term",
+      "status": "In Progress"
+    },
+    {
+      "id": 6,
+      "name": "Chemistry Assignment",
+      "grade": "Grade 12",
+      "subject": "Chemistry",
+      "year": "2022.1",
+      "type": "MC",
+      "duration": "30 minutes",
+      "status": "Completed"
+    },
+    {
+      "id": 7,
+      "name": "History Research Paper",
+      "grade": "Grade 10",
+      "subject": "History",
+      "year": "2024.2",
+      "type": "Essay",
+      "duration": "Middle Term",
+      "status": "Not yet"
+    },
+    {
+      "id": 8,
+      "name": "English Essay",
+      "grade": "Grade 11",
+      "subject": "English",
+      "year": "2023.2",
+      "type": "Essay",
+      "duration": "30 minutes",
+      "status": "In Progress"
+    },
+    {
+      "id": 9,
+      "name": "Math Final Exam",
+      "grade": "Grade 12",
+      "subject": "Mathematics",
+      "year": "2022.1",
+      "type": "MC",
+      "duration": "Final Term",
+      "status": "Completed"
+    },
+    {
+      "id": 10,
+      "name": "Physics Lab Report",
+      "grade": "Grade 10",
+      "subject": "Physics",
+      "year": "2023.1",
+      "type": "Essay",
+      "duration": "15 minutes",
+      "status": "Not yet"
+    },
+    {
+      "id": 11,
+      "name": "Additional Data",
+      "grade": "Grade 10",
+      "subject": "Chemistry",
+      "year": "2024.1",
+      "type": "MC",
+      "duration": "30 minutes",
+      "status": "Completed"
+    },
+    
+      {
+        "id": 12,
+        "name": "Science Project",
+        "grade": "Grade 11",
+        "subject": "Biology",
+        "year": "2023.2",
+        "type": "Essay",
+        "duration": "30 minutes",
+        "status": "Not yet"
+      },
+      {
+        "id": 13,
+        "name": "Literature Analysis",
+        "grade": "Grade 12",
+        "subject": "Literature",
+        "year": "2023.1",
+        "type": "MC",
+        "duration": "Middle Term",
+        "status": "Completed"
+      },
+      {
+        "id": 14,
+        "name": "Physics Quiz",
+        "grade": "Grade 10",
+        "subject": "Physics",
+        "year": "2024.1",
+        "type": "MC",
+        "duration": "15 minutes",
+        "status": "Not yet"
+      },
+      {
+        "id": 15,
+        "name": "Geography Test",
+        "grade": "Grade 11",
+        "subject": "Geography",
+        "year": "2022.2",
+        "type": "Essay",
+        "duration": "Final Term",
+        "status": "In Progress"
+      },
+      {
+        "id": 16,
+        "name": "Chemistry Assignment",
+        "grade": "Grade 12",
+        "subject": "Chemistry",
+        "year": "2022.1",
+        "type": "MC",
+        "duration": "30 minutes",
+        "status": "Completed"
+      },
+      {
+        "id": 17,
+        "name": "History Research Paper",
+        "grade": "Grade 10",
+        "subject": "History",
+        "year": "2024.2",
+        "type": "Essay",
+        "duration": "Middle Term",
+        "status": "Not yet"
+      },
+      {
+        "id": 18,
+        "name": "English Essay",
+        "grade": "Grade 11",
+        "subject": "English",
+        "year": "2023.2",
+        "type": "Essay",
+        "duration": "30 minutes",
+        "status": "In Progress"
+      },
+      {
+        "id": 19,
+        "name": "Math Final Exam",
+        "grade": "Grade 12",
+        "subject": "Mathematics",
+        "year": "2022.1",
+        "type": "MC",
+        "duration": "Final Term",
+        "status": "Completed"
+      },
+      {
+        "id": 20,
+        "name": "Physics Lab Report",
+        "grade": "Grade 10",
+        "subject": "Physics",
+        "year": "2023.1",
+        "type": "Essay",
+        "duration": "15 minutes",
+        "status": "Not yet"
+      },
+      {
+        "id": 21,
+        "name": "Additional Data",
+        "grade": "Grade 10",
+        "subject": "Chemistry",
+        "year": "2024.1",
+        "type": "MC",
+        "duration": "30 minutes",
+        "status": "Completed"
+      }
+  ]
+  

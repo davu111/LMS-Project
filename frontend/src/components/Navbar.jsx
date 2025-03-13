@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import "../styles/App.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from 'react-router-dom';
+import '../styles/App.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faStreetView,
   faUsers,
@@ -11,7 +11,7 @@ import {
   faChalkboardTeacher,
   faBookmark,
   faBook,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   return (
@@ -81,7 +81,7 @@ const Navbar = () => {
               </li>
               <li>
                 <Link
-                  to="/about"
+                  to="/assignment_teacher"
                   className="flex w-full py-2 px-3 rounded-full hover:bg-gray-100  align-middle items-center"
                 >
                   <div className="flex items-center pl-1 pr-4">
