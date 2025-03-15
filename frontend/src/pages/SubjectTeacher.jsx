@@ -1,127 +1,31 @@
 import '../styles/App.css';
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Suspense, lazy } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faFingerprint,
-  faClock,
   faSort,
   faBroadcastTower,
   faGlobe,
   faCheckDouble,
   faPastafarianism,
+  faBriefcase,
+  faBookOpen,
+  faBell,
+  faPersonBooth,
+  faChartPie,
 } from '@fortawesome/free-solid-svg-icons';
 
 import logoSchool from '../assets/logo-school.svg';
 
-const subjects = [
-  {
-    name: 'Mathematics',
-    color: 'amber',
-    exp: 3000,
-    grade: 'A+',
-  },
-  {
-    name: 'History',
-    color: 'pink',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Mandarin',
-    color: 'cyan',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Literature',
-    color: 'emerald',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Physics',
-    color: 'red',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Chemistry',
-    color: 'blue',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Biology',
-    color: 'amber',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Physics',
-    color: 'red',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Chemistry',
-    color: 'blue',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Biology',
-    color: 'amber',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Physics',
-    color: 'red',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Chemistry',
-    color: 'blue',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Biology',
-    color: 'amber',
-    exp: 5000,
-    grade: 'A+',
-  },
-];
+const Announcements = lazy(() => import('../components/Annoucements'));
+const Lessons = lazy(() => import('../components/Lessons'));
+const Assignments = lazy(() => import('../components/Assignments'));
+const Notebook = lazy(() => import('../components/Annoucements'));
+const Statistics = lazy(() => import('../components/Annoucements'));
+const Transcript = lazy(() => import('../components/Transcript'));
 
-const colorClasses = {
-  amber: {
-    bg: 'bg-amber-600',
-    text: 'text-amber-600',
-  },
-  pink: {
-    bg: 'bg-pink-600',
-    text: 'text-pink-600',
-  },
-  cyan: {
-    bg: 'bg-cyan-600',
-    text: 'text-cyan-600',
-  },
-  emerald: {
-    bg: 'bg-emerald-600',
-    text: 'text-emerald-600',
-  },
-  red: {
-    bg: 'bg-red-600',
-    text: 'text-red-600',
-  },
-  blue: {
-    bg: 'bg-blue-600',
-    text: 'text-blue-600',
-  },
-};
-
-function Class() {
+function SubjectTeacher() {
   return (
     <>
       <Header />
@@ -133,7 +37,7 @@ function Class() {
 function Header() {
   return (
     <header className="border border-gray-200 h-24 px-8 flex justify-between border-t-0 border-l-0 border-r-0 sticky top-0 bg-white z-10 align-middle items-center">
-      <div className="text-2xl font-bold font-raleway text-indigo-700 tracking-widest">Class</div>
+      <div className="text-2xl font-bold font-raleway text-indigo-700 tracking-widest">Mathematics</div>
       <div className="flex gap-2 align-middle items-center text-indigo-700">
         <img src={logoSchool} alt="Logo" className="w-8 h-8 border rounded-full" />
 
@@ -156,20 +60,66 @@ function Body() {
   );
 }
 
-function LeftSection() {
+const tabs = [
+  { id: 'announcements', icon: faBell, label: 'Announcements' },
+  { id: 'lessons', icon: faBookOpen, label: 'Lessons' },
+  { id: 'assignments', icon: faBriefcase, label: 'Assignments' },
+  { id: 'notebook', icon: faPersonBooth, label: 'My Notebook' },
+  { id: 'statistics', icon: faChartPie, label: 'Statistics' },
+  { id: 'transcript', icon: faCheckDouble, label: 'Transcript' },
+];
+
+function Tabs() {
+  const { tab } = useParams();
+  const navigate = useNavigate();
+
   return (
-    <div className=" py-4 border-gray-200 rounded-lg bg-gray-50 flex justify-center items-center flex-col shadow-inner">
-      <div className="flex gap-4 flex-wrap justify-center">
-        {subjects.map((subject, index) => (
-          <SubjectCard
-            key={index}
-            name={subject.name}
-            color={subject.color}
-            exp={subject.exp}
-            grade={subject.grade}
-          />
+    <div>
+      <div className="relative p-1 border-gray-300 rounded-lg flex justify-between items-center bg-gray-50 h-12 shadow-inner">
+        {tabs.map((item) => (
+          <div
+            key={item.id}
+            onClick={() => navigate(`/subject_teacher/${item.id}`)}
+            className="px-4 relative text-sm h-full w-full rounded-lg  flex items-center gap-2 cursor-pointer justify-center"
+          >
+            {tab === item.id && (
+              <motion.div
+                layoutId="active-tab"
+                className="absolute inset-0 bg-white rounded-lg drop-shadow-md shadow"
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              />
+            )}
+
+            <div
+              className={`relative flex items-center gap-2 z-10 ${
+                tab === item.id ? 'text-indigo-700 transition duration-400' : 'text-gray-400'
+              }`}
+            >
+              <FontAwesomeIcon icon={item.icon} />
+              <div>{item.label}</div>
+            </div>
+          </div>
         ))}
       </div>
+
+      <div className="mt-4">
+        <Suspense fallback={<div>Loading...</div>}>
+          {tab === 'announcements' && <Announcements />}
+          {tab === 'lessons' && <Lessons />}
+          {tab === 'assignments' && <Assignments />}
+          {tab === 'notebook' && <Notebook />}
+          {tab === 'statistics' && <Statistics />}
+          {tab === 'transcript' && <Transcript />}
+        </Suspense>
+      </div>
+    </div>
+  );
+}
+
+function LeftSection() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Tabs />
     </div>
   );
 }
@@ -177,14 +127,14 @@ function LeftSection() {
 function RightSection() {
   return (
     <div className="flex flex-col gap-4">
-      <div className="border px-3 py-5 border-gray-200 rounded-lg text-sm bg-gray-50">
+      <div className=" px-3 py-5 rounded-lg text-sm bg-gray-50 shadow-inner">
         <SemesterCard />
       </div>
-      <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 flex flex-col gap-2">
+      <div className=" p-5  rounded-lg bg-gray-50 flex flex-col gap-2 shadow-inner">
         <NewAnnouncementsCard />
       </div>
-      <div className="border p-5 border-gray-200 rounded-lg bg-gray-50 text-gray-400 text-sm">
-        <div className="mb-2 ">Exam schedule (optional) </div>
+      <div className=" p-5  rounded-lg bg-gray-50 text-gray-400 text-sm shadow-inner">
+        {/* <div className="mb-2 ">Exam schedule (optional) </div> */}
       </div>
     </div>
   );
@@ -232,32 +182,6 @@ function SemesterCard() {
   );
 }
 
-function SubjectCard({ name, color, exp, grade }) {
-  const { bg, text } = colorClasses[color] || {
-    bg: 'bg-gray-400',
-    text: 'text-gray-400',
-  };
-
-  return (
-    // <Link to="/subject">
-    <Link to="/subject_teacher">
-      <div
-        className="p-4 bg-white shadow-md rounded-lg flex gap-4 flex-col justify-items-start items-start min-w-56 hover:shadow-xl transition duration-300 cursor-pointer border border-transparent 
-               hover:scale-105"
-      >
-        <div className={`w-8 h-8 ${bg} rounded-full flex justify-center items-center`}></div>
-
-        <div className={`font-medium ${text}`}>{name}</div>
-
-        <div className="flex justify-between w-full text-sm text-gray-400">
-          <div>Exp: {exp}xp</div>
-          <div>{grade}</div>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
 function NewAnnouncementsCard() {
   return (
     <div className="bg-white flex flex-col w-full text-sm rounded-lg shadow-md p-4 gap-4">
@@ -296,4 +220,4 @@ function NewAnnouncementsCard() {
   );
 }
 
-export default Class;
+export default SubjectTeacher;

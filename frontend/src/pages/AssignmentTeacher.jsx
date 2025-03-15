@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -46,10 +47,15 @@ function Body() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="grid grid-cols-12 grid-rows-10 gap-4 px-8 py-4 flex-1 h-full">
-        <div className="col-start-1 col-end-3 row-start-1 row-end-2 bg-indigo-700 text-white justify-center items-center flex font-bold text-xl rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer">
+        <div
+          className="col-start-1 col-end-3 row-start-1 row-end-2 bg-indigo-700 text-white justify-center items-center flex font-bold text-xl rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
+          onClick={() => navigate('/assignment_teacher/new_assignment')}
+        >
           <FontAwesomeIcon icon={faSquarePlus} />
           <div className="ml-2 ">New</div>
         </div>
@@ -73,7 +79,7 @@ function Body() {
           <span className="ml-2 ">Search</span>
         </div>
 
-        <div className="relative col-start-1 col-end-3 row-start-3 row-end-5 z-1">
+        <div className=" col-start-1 col-end-3 row-start-3 row-end-5 z-1">
           <SelectDropDown
             filterKey="grade"
             lists={grades}
@@ -82,7 +88,7 @@ function Body() {
           />
         </div>
 
-        <div className="relative col-start-3 col-end-5 row-start-3 row-end-5 z-1">
+        <div className=" col-start-3 col-end-5 row-start-3 row-end-5 z-1">
           <SelectDropDown
             filterKey="subject"
             lists={subjects}
@@ -91,7 +97,7 @@ function Body() {
           />
         </div>
 
-        <div className="relative col-start-5 col-end-7 row-start-3 row-end-5 z-1">
+        <div className=" col-start-5 col-end-7 row-start-3 row-end-5 z-1">
           <SelectDropDown
             filterKey="year"
             lists={years}
@@ -100,7 +106,7 @@ function Body() {
           />
         </div>
 
-        <div className="relative col-start-7 col-end-9 row-start-3 row-end-5 z-1">
+        <div className=" col-start-7 col-end-9 row-start-3 row-end-5 z-1">
           <SelectDropDown
             filterKey="type"
             lists={types}
@@ -109,7 +115,7 @@ function Body() {
           />
         </div>
 
-        <div className="relative col-start-9 col-end-11 row-start-3 row-end-5 z-1">
+        <div className=" col-start-9 col-end-11 row-start-3 row-end-5 z-1">
           <SelectDropDown
             filterKey="duration"
             lists={durations}
@@ -176,7 +182,7 @@ function SelectDropDown({ filterKey, lists, selectedFilters, setSelectedFilters 
   };
 
   return (
-    <div ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <button
         className="flex items-center justify-between w-full px-4 py-2 text-left bg-white text-gray-700 rounded-lg shadow-md cursor-pointer hover:bg-gray-100 overflow-hidden whitespace-nowrap truncate"
         onClick={() => setIsOpen(!isOpen)}

@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -11,11 +6,13 @@ import Profile from './pages/Profile';
 import Ranking from './pages/Ranking';
 import Class from './pages/Class';
 import AssignmentTeacher from './pages/AssignmentTeacher';
+import NewAssignment from './components/NewAssignment';
 
 // import Subject from "./pages/Subject";
 import { Suspense, lazy } from 'react';
 
-const Subject = lazy(() => import('./pages/Subject'));
+// const Subject = lazy(() => import('./pages/Subject'));
+const SubjectTeacher = lazy(() => import('./pages/SubjectTeacher'));
 
 function App() {
   return (
@@ -30,7 +27,8 @@ function App() {
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/class" element={<Class />} />
             <Route path="/assignment_teacher" element={<AssignmentTeacher />} />
-            <Route
+            <Route path="/assignment_teacher/new_assignment" element={<NewAssignment />} />
+            {/* <Route
               path="/subject"
               element={<Navigate to="/subject/assignments" />}
             />
@@ -39,6 +37,15 @@ function App() {
               element={
                 <Suspense fallback={<div>Loading...</div>}>
                   <Subject />
+                </Suspense>
+              }
+            /> */}
+            <Route path="/subject_teacher" element={<Navigate to="/subject_teacher/assignments" />} />
+            <Route
+              path="/subject_teacher/:tab"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <SubjectTeacher />
                 </Suspense>
               }
             />
