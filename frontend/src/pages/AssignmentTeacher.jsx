@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePlus, faSearch, faChevronDown, faCheck } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSquarePlus,
+  faSearch,
+  faChevronDown,
+  faCheck,
+  faSquareCaretLeft,
+  faSquareCaretRight,
+} from '@fortawesome/free-solid-svg-icons';
 
 import assignments from '../assets/Draft/assignments.json';
 import Header from '../components/Header';
@@ -36,6 +43,8 @@ function Body() {
     status: [],
   });
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   return (
     <>
@@ -110,7 +119,17 @@ function Body() {
         </div>
 
         <div className="col-start-1 col-end-13 row-start-4 row-end-10 overflow-auto">
-          <Table assignments={assignments} selectedFilters={selectedFilters} />
+          <Table
+            assignments={assignments}
+            selectedFilters={selectedFilters}
+            currentPage={currentPage}
+            setTotalPages={setTotalPages}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+
+        <div className="col-start-1 col-end-13 row-start-10 row-end-11">
+          <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>
       </div>
     </>
@@ -195,8 +214,9 @@ function SelectDropDown({ filterKey, lists, selectedFilters, setSelectedFilters 
   );
 }
 
-function Table({ assignments, selectedFilters }) {
+function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCurrentPage }) {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const itemsPerPage = 15;
 
   const filteredData = useMemo(() => {
     return assignments.filter((assignment) => {
@@ -206,18 +226,18 @@ function Table({ assignments, selectedFilters }) {
         return value.includes(assignment[key]);
       });
       // Loc theo name
-      console.log(selectedFilters.name);
-      console.log(assignment.name);
-      console.log(assignment.name.toLowerCase().includes(selectedFilters.name.toLowerCase()));
+      // console.log(selectedFilters.name);
+      // console.log(assignment.name);
+      // console.log(assignment.name.toLowerCase().includes(selectedFilters.name.toLowerCase()));
       const matchesSearch = selectedFilters.name
         ? assignment.name.toLowerCase().includes(selectedFilters.name.toLowerCase())
         : true;
 
-      console.log(matchesFilter, matchesSearch);
+      // console.log(matchesFilter, matchesSearch);
       return matchesFilter && matchesSearch;
     });
   }, [assignments, selectedFilters]);
-  console.log('Filtered Data:', filteredData); // Thêm dòng này để debug
+  // console.log('Filtered Data:', filteredData); // Thêm dòng này để debug
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
@@ -235,6 +255,14 @@ function Table({ assignments, selectedFilters }) {
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
   };
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredData.length / itemsPerPage));
+  }, [filteredData, itemsPerPage, setTotalPages]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredData, setCurrentPage]);
+  const paginateData = sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div>
@@ -254,7 +282,7 @@ function Table({ assignments, selectedFilters }) {
           </tr>
         </thead>
         <tbody>
-          {sortedData.map((assignment) => (
+          {paginateData.map((assignment) => (
             <tr key={assignment.id} className="border-t hover:bg-gray-100 transition">
               <td className="p-3">{assignment.name}</td>
               <td className="p-3">{assignment.grade}</td>
@@ -267,6 +295,41 @@ function Table({ assignments, selectedFilters }) {
           ))}
         </tbody>
       </table>
+      {filteredData.length === 0 && (
+        <p className="text-center text-2xl mt-4 italic text-gray-400">No data found.</p>
+      )}
+    </div>
+  );
+}
+
+function Pagination({ currentPage, totalPages, setCurrentPage }) {
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  if (totalPages === 0) return null;
+  console.log(currentPage, totalPages);
+  return (
+    <div className="flex justify-center items-center">
+      <button
+        onClick={() => handlePageChange(currentPage - 1)}
+        className="px-4 py-2 mr-2 bg-indigo-700 text-white rounded-md border-2 hover:bg-white hover:text-indigo-700 transition-all duration-300 hover:border-indigo-700 hover:border-2 hover:cursor-pointer"
+      >
+        <FontAwesomeIcon icon={faSquareCaretLeft} />
+      </button>
+      <div>
+        <span className="mx-2 border border-gray-300 px-4 py-2">
+          {currentPage} / {totalPages}
+        </span>
+      </div>
+      <button
+        onClick={() => handlePageChange(currentPage + 1)}
+        className="px-4 py-2 bg-indigo-700 text-white rounded-md border-2 hover:bg-white hover:text-indigo-700 transition-all duration-300 hover:border-indigo-700 hover:border-2 hover:cursor-pointer"
+      >
+        <FontAwesomeIcon icon={faSquareCaretRight} />
+      </button>
     </div>
   );
 }
