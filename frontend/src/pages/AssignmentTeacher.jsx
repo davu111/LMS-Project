@@ -9,6 +9,7 @@ import {
   faCheck,
   faSquareCaretLeft,
   faSquareCaretRight,
+  faTrashCan,
 } from '@fortawesome/free-solid-svg-icons';
 
 import assignments from '../assets/Draft/assignments.json';
@@ -261,6 +262,11 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
   };
+
+  const handleDelete = (id) => {
+    const isConfirmed = window.confirm('Bạn có chắc chắn muốn xóa?');
+  };
+
   useEffect(() => {
     setTotalPages(Math.ceil(filteredData.length / itemsPerPage));
   }, [filteredData, itemsPerPage, setTotalPages]);
@@ -273,7 +279,7 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
   return (
     <div>
       <table className="w-full border border-gray-300 shadow-lg">
-        <thead className="text-indigo-700 sticky top-0 bg-white ring">
+        <thead className="text-indigo-700 sticky top-0 z-10 bg-white ring">
           <tr>
             {['name', 'grade', 'subject', 'year', 'type', 'duration', 'status'].map((col) => (
               <th
@@ -289,14 +295,21 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
         </thead>
         <tbody>
           {paginateData.map((assignment) => (
-            <tr key={assignment.id} className="border-t hover:bg-gray-100 transition">
+            <tr key={assignment.id} className="border-t hover:bg-gray-100 transition group relative">
               <td className="p-3">{assignment.name}</td>
               <td className="p-3">{assignment.grade}</td>
               <td className="p-3">{assignment.subject}</td>
               <td className="p-3">{assignment.year}</td>
               <td className="p-3">{assignment.type}</td>
               <td className="p-3">{assignment.duration}</td>
-              <td className="p-3">{assignment.status}</td>
+              <td className="p-3 relative">
+                {assignment.status}
+                <FontAwesomeIcon
+                  icon={faTrashCan}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition text-red-300 hover:cursor-pointer hover:text-red-500"
+                  onClick={() => handleDelete(assignment.id)}
+                ></FontAwesomeIcon>
+              </td>
             </tr>
           ))}
         </tbody>

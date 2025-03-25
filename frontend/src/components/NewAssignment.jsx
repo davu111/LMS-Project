@@ -8,6 +8,7 @@ import {
   faFloppyDisk,
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
+import Header from './Header';
 
 const grades = ['Grade 10', 'Grade 11', 'Grade 12'];
 const subjects = [
@@ -21,27 +22,31 @@ const subjects = [
   'Geography',
 ];
 
-const years = ['2024.2', '2024.1', '2023.2', '2023.1', '2022.2', '2022.1'];
-
 const types = ['MC', 'Essay'];
 
 const durations = ['15 minutes', '30 minutes', 'Middle Term', 'Final Term'];
 
-function NewAssignment() {
+function Body() {
   const [questions, setQuestions] = useState([{}]);
   const [typeselected, setTypeselected] = useState(types[0]);
   return (
-    <div className="flex flex-col gap-4 px-8 py-4">
-      <div className="sticky top-4 z-1 pb-4 border-b-2 border-gray-300 bg-white grid grid-cols-7 gap-4">
+    <div className="flex flex-col gap-4 px-8 pb-4 ">
+      <div className="sticky top-0 z-1 py-4 border-b-2 border-gray-300 bg-white grid grid-cols-7 gap-4">
         <SelectDropDown lists={grades} />
         <SelectDropDown lists={subjects} />
         <SelectDropDown lists={types} setTypeselected={setTypeselected} />
         <SelectDropDown lists={durations} />
         <DateStart />
-        <div className=" ml-4 bg-indigo-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer">
+        <div
+          className={`${
+            typeselected === 'Essay' && 'col-span-2'
+          } ml-4 bg-indigo-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
+        >
           <FontAwesomeIcon icon={faFloppyDisk} />
           <div className="ml-2 ">Save</div>
         </div>
+
+        {typeselected === 'MC' && <Import typeselected={typeselected} />}
       </div>
       {typeselected === 'MC' ? (
         <>
@@ -56,7 +61,7 @@ function NewAssignment() {
           </div>
         </>
       ) : (
-        <Import />
+        <Import typeselected={typeselected} />
       )}
     </div>
   );
@@ -168,7 +173,7 @@ function DateStart() {
   );
 }
 
-function Import() {
+function Import({ typeselected }) {
   return (
     <div className="flex items-center justify-center">
       <input
@@ -190,12 +195,26 @@ function Import() {
       />
       <label
         htmlFor="fileInput"
-        className="w-200 h-20 bg-green-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-green-700 hover:border-green-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
+        className={`${
+          typeselected === 'MC' ? 'w-full h-full' : 'w-1/2 h-20 text-2xl'
+        } bg-green-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-green-700 hover:border-green-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
       >
-        <FontAwesomeIcon className="mx-3 my-3 text-3xl" icon={faFileArrowUp} />
-        <div className="ml-2 text-3xl">Import</div>
+        <FontAwesomeIcon icon={faFileArrowUp} />
+        <div className="ml-2">Import</div>
       </label>
     </div>
+  );
+}
+
+function NewAssignment() {
+  return (
+    // <div className="flex flex-col h-screen">
+    //   <Header name="New Assignment" className="flex-shrink-0" />
+    //   <div className="flex-1 flex overflow-auto">
+    //     <Body />
+    //   </div>
+    // </div>
+    <Body />
   );
 }
 
