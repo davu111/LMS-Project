@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "backend",
   "version": "1.0.0",
   "description": "",
@@ -45,9 +44,5 @@
   "devDependencies": {
     "morgan": "^1.10.0",
     "nodemon": "^3.1.9"
-=======
-  "dependencies": {
-    "express": "^4.21.2"
->>>>>>> d2cc4819d8ae389c4b9673c9f91abc30920120a0
   }
 }
