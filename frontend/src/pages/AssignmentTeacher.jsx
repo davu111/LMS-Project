@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSquarePlus,
@@ -12,8 +13,10 @@ import {
   faTrashCan,
 } from '@fortawesome/free-solid-svg-icons';
 
-import assignments from '../assets/Draft/assignments.json';
+// import assignments from '../assets/Draft/assignments.json';
 import Header from '../components/Header';
+
+const URL = 'http://localhost:3000/api/assignments';
 
 const grades = ['All grade', 'Grade 10', 'Grade 11', 'Grade 12'];
 const subjects = [
@@ -47,8 +50,16 @@ function Body() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [assignments, setAssignments] = useState([]);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`${URL}/getAssignments`)
+      .then((res) => setAssignments(res.data))
+      .catch((err) => console.log('Error in AssignmentTeacher.jsx: ', err));
+  }, []);
 
   return (
     <>
@@ -80,7 +91,7 @@ function Body() {
           <span className="ml-2 ">Search</span>
         </div>
 
-        <div className=" col-start-1 col-end-3 row-start-3 row-end-5 z-1">
+        <div className=" col-start-1 col-end-3 row-start-3 row-end-5 z-2">
           <SelectDropDown
             filterKey="grade"
             lists={grades}
@@ -89,7 +100,7 @@ function Body() {
           />
         </div>
 
-        <div className=" col-start-3 col-end-5 row-start-3 row-end-5 z-1">
+        <div className=" col-start-3 col-end-5 row-start-3 row-end-5 z-2">
           <SelectDropDown
             filterKey="subject"
             lists={subjects}
@@ -98,7 +109,7 @@ function Body() {
           />
         </div>
 
-        <div className=" col-start-5 col-end-7 row-start-3 row-end-5 z-1">
+        <div className=" col-start-5 col-end-7 row-start-3 row-end-5 z-2">
           <SelectDropDown
             filterKey="year"
             lists={years}
@@ -107,7 +118,7 @@ function Body() {
           />
         </div>
 
-        <div className=" col-start-7 col-end-9 row-start-3 row-end-5 z-1">
+        <div className=" col-start-7 col-end-9 row-start-3 row-end-5 z-2">
           <SelectDropDown
             filterKey="type"
             lists={types}
@@ -116,7 +127,7 @@ function Body() {
           />
         </div>
 
-        <div className=" col-start-9 col-end-11 row-start-3 row-end-5 z-1">
+        <div className=" col-start-9 col-end-11 row-start-3 row-end-5 z-2">
           <SelectDropDown
             filterKey="duration"
             lists={durations}
@@ -279,7 +290,7 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
   return (
     <div>
       <table className="w-full border border-gray-300 shadow-lg">
-        <thead className="text-indigo-700 sticky top-0 z-10 bg-white ring">
+        <thead className="text-indigo-700 sticky top-0 z-1 bg-white ring">
           <tr>
             {['name', 'grade', 'subject', 'year', 'type', 'duration', 'status'].map((col) => (
               <th
