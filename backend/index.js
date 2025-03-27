@@ -20,7 +20,7 @@ app.use(express.json());
 //Routes
 route(app);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Example app listening on port http://localhost:${port}`);
 }); 
 

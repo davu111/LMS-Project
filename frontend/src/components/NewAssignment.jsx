@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -9,6 +10,9 @@ import {
   faPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import Header from './Header';
+import Modal from './Modal';
+
+const URL = 'http://localhost:3000/api/assignments';
 
 const grades = ['Grade 10', 'Grade 11', 'Grade 12'];
 const subjects = [
@@ -27,28 +31,55 @@ const types = ['MC', 'Essay'];
 const durations = ['15 minutes', '30 minutes', 'Middle Term', 'Final Term'];
 
 function Body() {
+  const [isOpen, setIsOpen] = useState(false);
   const [questions, setQuestions] = useState([{}]);
-  const [typeselected, setTypeselected] = useState(types[0]);
+  const [state, setState] = useState({
+    name: 'New Assignment',
+    grade: grades[0],
+    subject: subjects[0],
+    type: types[0],
+    duration: durations[0],
+    status: 'Draft',
+    year: '',
+    dateStart: '',
+  });
+
+  const handleSave = () => {
+    axios
+      .post(`${URL}/createAssignment`, state)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="flex flex-col gap-4 px-8 pb-4 ">
-      <div className="sticky top-0 z-1 py-4 border-b-2 border-gray-300 bg-white grid grid-cols-7 gap-4">
-        <SelectDropDown lists={grades} />
-        <SelectDropDown lists={subjects} />
-        <SelectDropDown lists={types} setTypeselected={setTypeselected} />
-        <SelectDropDown lists={durations} />
-        <DateStart />
-        <div
-          className={`${
-            typeselected === 'Essay' && 'col-span-2'
-          } ml-4 bg-indigo-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
-        >
-          <FontAwesomeIcon icon={faFloppyDisk} />
-          <div className="ml-2 ">Save</div>
-        </div>
+      <div className="sticky top-0 z-1 py-4 border-b-2 border-gray-300 bg-white">
+        <input
+          className="text-xl font-semibold mb-4 focus:outline-none"
+          value={state.name}
+          onChange={(e) => setState({ ...state, name: e.target.value })}
+        ></input>
+        <div className="grid grid-cols-7 gap-4">
+          <SelectDropDown filterKey="grade" lists={grades} state={state} setState={setState} />
+          <SelectDropDown filterKey="subject" lists={subjects} state={state} setState={setState} />
+          <SelectDropDown filterKey="type" lists={types} state={state} setState={setState} />
+          <SelectDropDown filterKey="duration" state={state} setState={setState} lists={durations} />
+          <DateStart state={state} setState={setState} />
+          <div
+            className={`${
+              state['type'] === 'Essay' && 'col-span-2'
+            } ml-4 bg-indigo-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
+          >
+            <FontAwesomeIcon icon={faFloppyDisk} />
+            <div className="ml-2 " onClick={() => setIsOpen(true)}>
+              Save
+            </div>
+          </div>
 
-        {typeselected === 'MC' && <Import typeselected={typeselected} />}
+          {state['type'] === 'MC' && <Import typeselected={state['type']} />}
+        </div>
       </div>
-      {typeselected === 'MC' ? (
+      {state['type'] === 'MC' ? (
         <>
           {questions.map((_, index) => (
             <Question key={index} index={index + 1} />
@@ -61,14 +92,14 @@ function Body() {
           </div>
         </>
       ) : (
-        <Import typeselected={typeselected} />
+        <Import typeselected={state['type']} />
       )}
+      {isOpen && <Modal title="Save" onClose={() => setIsOpen(false)} handleSubmit={handleSave} />}
     </div>
   );
 }
 
-function SelectDropDown({ lists, setTypeselected }) {
-  const [selected, setSelected] = useState(lists[0]);
+function SelectDropDown({ filterKey, lists, state, setState }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -92,7 +123,7 @@ function SelectDropDown({ lists, setTypeselected }) {
         className="flex items-center justify-between w-full px-4 py-2 text-left bg-white text-gray-700 rounded-lg shadow-md cursor-pointer hover:bg-gray-100 overflow-hidden whitespace-nowrap truncate"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="truncate">{selected}</span>
+        <span className="truncate">{state[filterKey]}</span>
         <FontAwesomeIcon icon={faChevronDown} />
       </button>
 
@@ -107,13 +138,10 @@ function SelectDropDown({ lists, setTypeselected }) {
             <li
               key={list}
               className="group flex justify-between items-center px-4 py-2 cursor-pointer hover:bg-indigo-700 hover:text-white"
-              onClick={() => {
-                setSelected(list);
-                setTypeselected(list);
-              }}
+              onClick={() => setState({ ...state, [filterKey]: list })}
             >
               {list}
-              {selected === list && (
+              {state[filterKey] === list && (
                 <FontAwesomeIcon icon={faCheck} className="text-indigo-700 group-hover:text-white" />
               )}
             </li>
@@ -164,10 +192,21 @@ function Question({ index }) {
   );
 }
 
-function DateStart() {
+function DateStart({ state, setState }) {
   return (
     <input
       type="datetime-local"
+      value={state['dateStart']}
+      min={new Date().toISOString().slice(0, 16)}
+      onChange={(e) => {
+        const date = new Date(e.target.value);
+        const formattedDate = date.toISOString().slice(0, 16);
+        setState((prev) => ({
+          ...prev,
+          year: date.getMonth < 7 ? `${date.getFullYear()}.1` : `${date.getFullYear()}.2`,
+          dateStart: formattedDate,
+        }));
+      }}
       className="w-full px-4 py-2 bg-white text-gray-700 rounded-lg shadow-md cursor-pointer hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
     />
   );

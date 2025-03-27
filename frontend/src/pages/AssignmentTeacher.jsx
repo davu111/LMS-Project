@@ -292,7 +292,7 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
       <table className="w-full border border-gray-300 shadow-lg">
         <thead className="text-indigo-700 sticky top-0 z-1 bg-white ring">
           <tr>
-            {['name', 'grade', 'subject', 'year', 'type', 'duration', 'status'].map((col) => (
+            {['name', 'grade', 'subject', 'date', 'type', 'duration', 'status'].map((col) => (
               <th
                 key={col}
                 onClick={() => sortData(col)}
@@ -306,11 +306,11 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
         </thead>
         <tbody>
           {paginateData.map((assignment) => (
-            <tr key={assignment.id} className="border-t hover:bg-gray-100 transition group relative">
+            <tr key={assignment._id} className="border-t hover:bg-gray-100 transition group relative">
               <td className="p-3">{assignment.name}</td>
               <td className="p-3">{assignment.grade}</td>
               <td className="p-3">{assignment.subject}</td>
-              <td className="p-3">{assignment.year}</td>
+              <td className="p-3">{assignment.dateStart}</td>
               <td className="p-3">{assignment.type}</td>
               <td className="p-3">{assignment.duration}</td>
               <td className="p-3 relative">
