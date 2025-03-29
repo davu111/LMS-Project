@@ -15,7 +15,7 @@ function Modal({ title, onClose, handleSubmit }) {
 
   return (
     <motion.div
-      className="fixed inset-0 flex items-center justify-center bg-black/90 backdrop-blur-sm z-10"
+      className="fixed inset-0 flex items-center justify-center bg-black/10 z-10"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -36,7 +36,7 @@ function Modal({ title, onClose, handleSubmit }) {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1.2, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.1, ease: 'easeOut' }}
           >
             <FontAwesomeIcon
               icon={icon}

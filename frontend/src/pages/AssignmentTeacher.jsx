@@ -15,6 +15,7 @@ import {
 
 // import assignments from '../assets/Draft/assignments.json';
 import Header from '../components/Header';
+import Modal from '../components/Modal';
 
 const URL = 'http://localhost:3000/api/assignments';
 
@@ -66,7 +67,7 @@ function Body() {
       <div className="grid grid-cols-12 grid-rows-10 gap-4 px-8 py-4 flex-1 h-full">
         <div
           className="col-start-1 col-end-3 row-start-1 row-end-2 bg-indigo-700 text-white justify-center items-center flex font-bold text-xl rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
-          onClick={() => navigate('/assignment_teacher/new_assignment')}
+          onClick={() => navigate('/assignment_teacher/edit/')}
         >
           <FontAwesomeIcon icon={faSquarePlus} />
           <div className="ml-2 ">New</div>
@@ -139,6 +140,7 @@ function Body() {
         <div className="col-start-1 col-end-13 row-start-4 row-end-10 overflow-auto">
           <Table
             assignments={assignments}
+            setAssignments={setAssignments}
             selectedFilters={selectedFilters}
             currentPage={currentPage}
             setTotalPages={setTotalPages}
@@ -232,9 +234,20 @@ function SelectDropDown({ filterKey, lists, selectedFilters, setSelectedFilters 
   );
 }
 
-function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCurrentPage }) {
+function Table({ assignments, setAssignments, selectedFilters, currentPage, setTotalPages, setCurrentPage }) {
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState('');
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const itemsPerPage = 15;
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    const time = date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+    const day = date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return `${time} ${day}`;
+  };
 
   const filteredData = useMemo(() => {
     return assignments.filter((assignment) => {
@@ -275,7 +288,14 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
   };
 
   const handleDelete = (id) => {
-    const isConfirmed = window.confirm('Bạn có chắc chắn muốn xóa?');
+    axios
+      .delete(`${URL}/deleteAssignment/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        setAssignments((prev) => prev.filter((assignment) => assignment._id !== id));
+        setDeleteId('');
+      })
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
@@ -307,10 +327,15 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
         <tbody>
           {paginateData.map((assignment) => (
             <tr key={assignment._id} className="border-t hover:bg-gray-100 transition group relative">
-              <td className="p-3">{assignment.name}</td>
+              <td
+                className="p-3 cursor-pointer hover:underline"
+                onClick={() => navigate('/assignment_teacher/edit/' + assignment._id)}
+              >
+                {assignment.name}
+              </td>
               <td className="p-3">{assignment.grade}</td>
               <td className="p-3">{assignment.subject}</td>
-              <td className="p-3">{assignment.dateStart}</td>
+              <td className="p-3">{formatDate(assignment.dateStart || new Date())}</td>
               <td className="p-3">{assignment.type}</td>
               <td className="p-3">{assignment.duration}</td>
               <td className="p-3 relative">
@@ -318,7 +343,10 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
                 <FontAwesomeIcon
                   icon={faTrashCan}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition text-red-300 hover:cursor-pointer hover:text-red-500"
-                  onClick={() => handleDelete(assignment.id)}
+                  onClick={() => {
+                    setIsOpen(true);
+                    setDeleteId(assignment._id);
+                  }}
                 ></FontAwesomeIcon>
               </td>
             </tr>
@@ -327,6 +355,9 @@ function Table({ assignments, selectedFilters, currentPage, setTotalPages, setCu
       </table>
       {filteredData.length === 0 && (
         <p className="text-center text-2xl mt-4 italic text-gray-400">No data found.</p>
+      )}
+      {isOpen && (
+        <Modal title="Delete" onClose={() => setIsOpen(false)} handleSubmit={() => handleDelete(deleteId)} />
       )}
     </div>
   );
@@ -340,7 +371,6 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
   };
 
   if (totalPages === 0) return null;
-  console.log(currentPage, totalPages);
   return (
     <div className="flex justify-center items-center">
       <button

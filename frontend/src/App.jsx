@@ -27,7 +27,7 @@ function App() {
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/class" element={<Class />} />
             <Route path="/assignment_teacher" element={<AssignmentTeacher />} />
-            <Route path="/assignment_teacher/new_assignment" element={<NewAssignment />} />
+            <Route path="/assignment_teacher/edit/:id?" element={<NewAssignment />} />
             {/* <Route
               path="/subject"
               element={<Navigate to="/subject/assignments" />}

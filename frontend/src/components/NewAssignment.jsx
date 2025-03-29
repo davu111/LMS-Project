@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +13,7 @@ import {
 import Header from './Header';
 import Modal from './Modal';
 
-const URL = 'http://localhost:3000/api/assignments';
+const URL = 'http://localhost:3000/api';
 
 const grades = ['Grade 10', 'Grade 11', 'Grade 12'];
 const subjects = [
@@ -32,8 +33,33 @@ const durations = ['15 minutes', '30 minutes', 'Middle Term', 'Final Term'];
 
 function Body() {
   const [isOpen, setIsOpen] = useState(false);
-  const [questions, setQuestions] = useState([{}]);
-  const [state, setState] = useState({
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`${URL}/assignments/getAssignment/${id}`)
+        .then((res) => {
+          console.log(res);
+          setState(res.data);
+          axios.get(`${URL}/questions/getQuestion/${id}`).then((res) => {
+            console.log(res);
+            setQuestions(res.data);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [id]);
+
+  const newQuestion = {
+    question: '',
+    answer: { a: '', b: '', c: '', d: '' },
+    correct: '',
+    assignment_id: '',
+  };
+  const NewAssignment = {
     name: 'New Assignment',
     grade: grades[0],
     subject: subjects[0],
@@ -42,13 +68,35 @@ function Body() {
     status: 'Draft',
     year: '',
     dateStart: '',
-  });
+  };
+  const [questions, setQuestions] = useState([newQuestion]);
+  const [state, setState] = useState(NewAssignment);
 
   const handleSave = () => {
+    const filteredQuestions = questions.filter((q) => Object.keys(q).length > 0 && q.question.trim() !== '');
+
     axios
-      .post(`${URL}/createAssignment`, state)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .post(`${URL}/assignments/createAssignment`, state)
+      .then((res) => {
+        console.log(res);
+        const assignment_id = res.data._id;
+
+        const questionRequests = filteredQuestions.map((q) => {
+          return axios.post(`${URL}/questions/createQuestion`, {
+            ...q,
+            assignment_id,
+          });
+        });
+
+        return Promise.all(questionRequests);
+      })
+      .then((responses) => {
+        console.log(
+          'All questions created:',
+          responses.map((res) => res.data),
+        );
+      })
+      .catch((err) => console.error('Error:', err.response?.data || err.message));
   };
 
   return (
@@ -82,11 +130,11 @@ function Body() {
       {state['type'] === 'MC' ? (
         <>
           {questions.map((_, index) => (
-            <Question key={index} index={index + 1} />
+            <Question key={index} index={index + 1} questions={questions} setQuestions={setQuestions} />
           ))}
           <div
             className="mx-3 my-2 bg-indigo-700 text-white justify-center items-center flex font-bold text-xl rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:cursor-pointer"
-            onClick={() => setQuestions([...questions, {}])}
+            onClick={() => setQuestions((prev) => [...prev, { ...newQuestion }])}
           >
             <FontAwesomeIcon className="mx-3 my-3" icon={faPlus} />
           </div>
@@ -94,7 +142,7 @@ function Body() {
       ) : (
         <Import typeselected={state['type']} />
       )}
-      {isOpen && <Modal title="Save" onClose={() => setIsOpen(false)} handleSubmit={handleSave} />}
+      {isOpen && <Modal title="Save" onClose={() => setIsOpen(false)} handleSubmit={() => handleSave()} />}
     </div>
   );
 }
@@ -152,23 +200,48 @@ function SelectDropDown({ filterKey, lists, state, setState }) {
   );
 }
 
-function Question({ index }) {
+function Question({ index, questions, setQuestions }) {
   const textareaRef = useRef(null);
-  const [text, setText] = useState('');
-  const [selected, setSelected] = useState(null);
   const options = ['A', 'B', 'C', 'D'];
 
   const handleInput = (e) => {
-    setText(e.target.value);
+    setQuestions((prevQuestions) => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[index - 1].question = e.target.value;
+      return updatedQuestions;
+    });
     textareaRef.current.style.height = 'auto'; // Reset height de tinh lai
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
   };
+
+  const handleSelected = (option) => {
+    setQuestions((prevQuestions) => {
+      const updatedQuestions = [...prevQuestions];
+      updatedQuestions[index - 1].correct = option;
+      return updatedQuestions;
+    });
+  };
+
+  const handleChangeOption = (e, option) => {
+    setQuestions((prevQuestions) => {
+      return prevQuestions.map((q, i) =>
+        i === index - 1
+          ? {
+              ...q,
+              answer: { ...q.answer, [option]: e.target.value },
+            }
+          : q,
+      );
+    });
+    // console.log(questions[index - 1].answer[option]);
+  };
+
   return (
     <div className="grid grid-cols-1 gap-4 border border-gray-200 p-4 shadow rounded-lg animattion-all duration-300 hover:shadow-lg hover:scale-102">
       <label className="col-span-2 row-span-1 block text-xl text-gray-500">Question {index}</label>
       <textarea
         ref={textareaRef}
-        value={text}
+        value={questions[index - 1].question}
         onInput={handleInput}
         placeholder="Question"
         className="col-span-2 row-span-1 w-full px-4 py-2 border border-gray-300 rounded-lg break-words resize-none overflow-hidden focus:outline-none focus:border-indigo-500"
@@ -179,12 +252,24 @@ function Question({ index }) {
           <div
             key={option}
             className={`flex items-center border  rounded px-3 py-1 hover:border-indigo-500 hover:cursor-pointer transition-all 
-              ${selected === option ? 'bg-indigo-100 border-indigo-500' : 'border-gray-300'}`}
-            onDoubleClick={() => setSelected(option)}
+              ${
+                questions[index - 1].correct === option
+                  ? 'bg-indigo-100 border-indigo-500'
+                  : 'border-gray-300'
+              }`}
+            onDoubleClick={() => handleSelected(option)}
           >
             <span className="text-gray-500">{option}. </span>
-            <input type="text" placeholder="Answer" className="flex-1 px-4 py-2 outline-none" />
-            {selected === option && <FontAwesomeIcon icon={faCheck} className="text-green-500" />}
+            <input
+              type="text"
+              placeholder="Answer"
+              className="flex-1 px-4 py-2 outline-none"
+              value={questions[index - 1]?.answer?.[option] ?? ''}
+              onChange={(e) => handleChangeOption(e, option)}
+            />
+            {questions[index - 1].correct === option && (
+              <FontAwesomeIcon icon={faCheck} className="text-green-500" />
+            )}
           </div>
         ))}
       </div>
@@ -196,14 +281,15 @@ function DateStart({ state, setState }) {
   return (
     <input
       type="datetime-local"
-      value={state['dateStart']}
+      value={state['dateStart'].slice(0, 16)}
       min={new Date().toISOString().slice(0, 16)}
       onChange={(e) => {
         const date = new Date(e.target.value);
         const formattedDate = date.toISOString().slice(0, 16);
+
         setState((prev) => ({
           ...prev,
-          year: date.getMonth < 7 ? `${date.getFullYear()}.1` : `${date.getFullYear()}.2`,
+          year: date.getMonth() < 7 ? `${date.getFullYear()}.1` : `${date.getFullYear()}.2`,
           dateStart: formattedDate,
         }));
       }}
