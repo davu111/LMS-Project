@@ -1,17 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import * as XLSX from 'xlsx';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
+
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronDown,
   faCheck,
-  faFileArrowUp,
   faFloppyDisk,
   faPlus,
+  faFileExcel,
+  faFilePdf,
 } from '@fortawesome/free-solid-svg-icons';
 import Header from './Header';
 import Modal from './Modal';
+import Pagination from './Pagination';
+
+pdfjs.GlobalWorkerOptions.workerSrc = '../../public/pdf.worker.min.mjs';
 
 const URL = 'http://localhost:3000/api';
 
@@ -67,42 +76,74 @@ function Body() {
     duration: durations[0],
     status: 'Draft',
     year: '',
-    dateStart: '',
+    dateStart: new Date().toISOString().slice(0, 16),
   };
   const [questions, setQuestions] = useState([newQuestion]);
   const [state, setState] = useState(NewAssignment);
 
   const handleSave = () => {
     const filteredQuestions = questions.filter((q) => Object.keys(q).length > 0 && q.question.trim() !== '');
+    if (!id) {
+      axios
+        .post(`${URL}/assignments/createAssignment`, state)
+        .then((res) => {
+          console.log(res);
+          const assignment_id = res.data._id;
 
-    axios
-      .post(`${URL}/assignments/createAssignment`, state)
-      .then((res) => {
-        console.log(res);
-        const assignment_id = res.data._id;
-
-        const questionRequests = filteredQuestions.map((q) => {
-          return axios.post(`${URL}/questions/createQuestion`, {
-            ...q,
-            assignment_id,
+          const questionRequests = filteredQuestions.map((q) => {
+            return axios.post(`${URL}/questions/createQuestion`, {
+              ...q,
+              assignment_id,
+            });
           });
-        });
 
-        return Promise.all(questionRequests);
-      })
-      .then((responses) => {
-        console.log(
-          'All questions created:',
-          responses.map((res) => res.data),
-        );
-      })
-      .catch((err) => console.error('Error:', err.response?.data || err.message));
+          return Promise.all(questionRequests);
+        })
+        .then((responses) => {
+          console.log(
+            'All questions created:',
+            responses.map((res) => res.data),
+          );
+        })
+        .catch((err) => console.error('Error:', err.response?.data || err.message));
+    } else {
+      axios
+        .put(`${URL}/assignments/updateAssignment/${id}`, state)
+        .then((res) => {
+          console.log(res);
+          const assignment_id = res.data._id;
+
+          const questionRequests = filteredQuestions.map((q) => {
+            if (q._id) {
+              return axios.put(`${URL}/questions/updateQuestion/${q._id}`, {
+                ...q,
+              });
+            } else {
+              return axios.post(`${URL}/questions/createQuestion`, {
+                ...q,
+                assignment_id,
+              });
+            }
+          });
+
+          return Promise.all(questionRequests);
+        })
+        .then((responses) => {
+          console.log(
+            'All questions created:',
+            responses.map((res) => res.data),
+          );
+        })
+        .catch((err) => console.error('Error:', err.response?.data || err.message));
+    }
   };
 
   return (
     <div className="flex flex-col gap-4 px-8 pb-4 ">
       <div className="sticky top-0 z-1 py-4 border-b-2 border-gray-300 bg-white">
         <input
+          id="assignmentName"
+          type="text"
           className="text-xl font-semibold mb-4 focus:outline-none"
           value={state.name}
           onChange={(e) => setState({ ...state, name: e.target.value })}
@@ -124,7 +165,7 @@ function Body() {
             </div>
           </div>
 
-          {state['type'] === 'MC' && <Import typeselected={state['type']} />}
+          {state['type'] === 'MC' && <ImportExcel typeselected={state['type']} setQuestions={setQuestions} />}
         </div>
       </div>
       {state['type'] === 'MC' ? (
@@ -140,7 +181,7 @@ function Body() {
           </div>
         </>
       ) : (
-        <Import typeselected={state['type']} />
+        <ImportPdf typeselected={state['type']} setQuestions={setQuestions} />
       )}
       {isOpen && <Modal title="Save" onClose={() => setIsOpen(false)} handleSubmit={() => handleSave()} />}
     </div>
@@ -238,8 +279,9 @@ function Question({ index, questions, setQuestions }) {
 
   return (
     <div className="grid grid-cols-1 gap-4 border border-gray-200 p-4 shadow rounded-lg animattion-all duration-300 hover:shadow-lg hover:scale-102">
-      <label className="col-span-2 row-span-1 block text-xl text-gray-500">Question {index}</label>
+      <span className="col-span-2 row-span-1 block text-xl text-gray-500">Question {index}</span>
       <textarea
+        id="question"
         ref={textareaRef}
         value={questions[index - 1].question}
         onInput={handleInput}
@@ -261,6 +303,7 @@ function Question({ index, questions, setQuestions }) {
           >
             <span className="text-gray-500">{option}. </span>
             <input
+              id={option}
               type="text"
               placeholder="Answer"
               className="flex-1 px-4 py-2 outline-none"
@@ -280,6 +323,7 @@ function Question({ index, questions, setQuestions }) {
 function DateStart({ state, setState }) {
   return (
     <input
+      id="dateStart"
       type="datetime-local"
       value={state['dateStart'].slice(0, 16)}
       min={new Date().toISOString().slice(0, 16)}
@@ -298,35 +342,102 @@ function DateStart({ state, setState }) {
   );
 }
 
-function Import({ typeselected }) {
+function ImportExcel({ typeselected, setQuestions }) {
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fileType = file.name.split('.').pop().toLowerCase();
+    if (fileType == 'xlsx' && fileType == 'xls') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+
+        //XLSX to JSON
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+        const questions = jsonData.map((question) => ({
+          question: question.question || '',
+          answer: {
+            A: question.A || '',
+            B: question.B || '',
+            C: question.C || '',
+            D: question.D || '',
+          },
+          correct: question.correct || '',
+          assignment_id: '',
+        }));
+        setQuestions(questions);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert('File type must be .xlsx or .xls');
+    }
+  };
+
   return (
     <div className="flex items-center justify-center">
       <input
         type="file"
-        className="hidden"
         id="fileInput"
-        accept=".csv"
-        onChange={(e) => {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-              const content = event.target.result;
-              console.log(content);
-            };
-            reader.readAsText(file);
-          }
-        }}
+        className="hidden"
+        accept=".xlsx, .xls"
+        onChange={(e) => handleFileUpload(e)}
       />
       <label
         htmlFor="fileInput"
-        className={`${
-          typeselected === 'MC' ? 'w-full h-full' : 'w-1/2 h-20 text-2xl'
-        } bg-green-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-green-700 hover:border-green-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
+        className="w-full h-full
+        bg-green-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-green-700 hover:border-green-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
       >
-        <FontAwesomeIcon icon={faFileArrowUp} />
+        <FontAwesomeIcon icon={faFileExcel} />
         <div className="ml-2">Import</div>
       </label>
+    </div>
+  );
+}
+
+function ImportPdf({ typeselected, setQuestions }) {
+  const [file, setFile] = useState(null);
+  const [numPages, setNumPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFile(file);
+    setCurrentPage(1);
+    setNumPages(0);
+  };
+
+  return (
+    <div className="relative flex flex-col items-center justify-center">
+      <input
+        type="file"
+        id="fileInput"
+        className="hidden"
+        accept=".pdf"
+        onChange={(e) => handleFileUpload(e)}
+      />
+      <label
+        htmlFor="fileInput"
+        className="absolute top-0 left-0 w-full z-10
+        bg-red-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-green-700 hover:border-green-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
+      >
+        <FontAwesomeIcon icon={faFilePdf} />
+        <div className="ml-2">Import</div>
+      </label>
+      {file && (
+        <div className="flex flex-col items-center">
+          <Document file={file} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
+            <Page pageNumber={currentPage} />
+          </Document>
+
+          <Pagination currentPage={currentPage} totalPages={numPages} setCurrentPage={setCurrentPage} />
+        </div>
+      )}
     </div>
   );
 }
