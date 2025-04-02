@@ -41,6 +41,8 @@ const types = ['MC', 'Essay'];
 const durations = ['15 minutes', '30 minutes', 'Middle Term', 'Final Term'];
 
 function Body() {
+  const [isShowing, setIsShowing] = useState(true);
+  const [file, setFile] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const { id } = useParams();
 
@@ -155,9 +157,7 @@ function Body() {
           <SelectDropDown filterKey="duration" state={state} setState={setState} lists={durations} />
           <DateStart state={state} setState={setState} />
           <div
-            className={`${
-              state['type'] === 'Essay' && 'col-span-2'
-            } ml-4 bg-indigo-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
+            className={`ml-4 bg-indigo-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 hover:scale-105 hover:cursor-pointer`}
           >
             <FontAwesomeIcon icon={faFloppyDisk} />
             <div className="ml-2 " onClick={() => setIsOpen(true)}>
@@ -165,7 +165,11 @@ function Body() {
             </div>
           </div>
 
-          {state['type'] === 'MC' && <ImportExcel typeselected={state['type']} setQuestions={setQuestions} />}
+          {state['type'] === 'MC' ? (
+            <ImportExcel setQuestions={setQuestions} />
+          ) : (
+            <ImportPdf setIsShowing={setIsShowing} setFile={setFile} />
+          )}
         </div>
       </div>
       {state['type'] === 'MC' ? (
@@ -181,7 +185,10 @@ function Body() {
           </div>
         </>
       ) : (
-        <ImportPdf typeselected={state['type']} setQuestions={setQuestions} />
+        <>
+          {isShowing && <DragPdf setIsShowing={setIsShowing} setFile={setFile} />}
+          {file && <ViewPdf file={file} />}
+        </>
       )}
       {isOpen && <Modal title="Save" onClose={() => setIsOpen(false)} handleSubmit={() => handleSave()} />}
     </div>
@@ -342,7 +349,7 @@ function DateStart({ state, setState }) {
   );
 }
 
-function ImportExcel({ typeselected, setQuestions }) {
+function ImportExcel({ setQuestions }) {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -400,44 +407,118 @@ function ImportExcel({ typeselected, setQuestions }) {
   );
 }
 
-function ImportPdf({ typeselected, setQuestions }) {
-  const [file, setFile] = useState(null);
-  const [numPages, setNumPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+function ImportPdf({ setIsShowing, setFile }) {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setFile(file);
-    setCurrentPage(1);
-    setNumPages(0);
+    setIsShowing(false);
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center">
-      <input
-        type="file"
-        id="fileInput"
-        className="hidden"
-        accept=".pdf"
-        onChange={(e) => handleFileUpload(e)}
-      />
-      <label
-        htmlFor="fileInput"
-        className="absolute top-0 left-0 w-full z-10
-        bg-red-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-green-700 hover:border-green-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
-      >
-        <FontAwesomeIcon icon={faFilePdf} />
-        <div className="ml-2">Import</div>
-      </label>
-      {file && (
-        <div className="flex flex-col items-center">
-          <Document file={file} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
-            <Page pageNumber={currentPage} />
-          </Document>
+    <>
+      <div className="flex items-center justify-center">
+        <input
+          type="file"
+          id="fileInput"
+          className="hidden"
+          accept=".pdf"
+          onChange={(e) => handleFileUpload(e)}
+        />
+        <label
+          htmlFor="fileInput"
+          className="w-full h-full
+        bg-red-700 text-white justify-center items-center flex font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-red-700 hover:border-red-700 hover:border-2 hover:scale-105 hover:cursor-pointer"
+        >
+          <FontAwesomeIcon icon={faFilePdf} />
+          <div className="ml-2">Import</div>
+        </label>
+      </div>
+    </>
+  );
+}
 
-          <Pagination currentPage={currentPage} totalPages={numPages} setCurrentPage={setCurrentPage} />
-        </div>
-      )}
+function DragPdf({ setIsShowing, setFile }) {
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    setIsShowing(false);
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    setFile(file);
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFile(file);
+  };
+
+  return (
+    <>
+      <div
+        className={`relative w-full p-4 border-2 border-dashed rounded-lg transition-all duration-300 ${
+          isDragging ? 'border-blue-500 bg-blue-100' : 'border-blue-400'
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <input
+          type="file"
+          id="fileInput"
+          className="hidden"
+          accept=".pdf"
+          onChange={(e) => handleFileUpload(e)}
+        />
+        <label
+          htmlFor="fileInput"
+          className="w-full flex flex-col items-center justify-center cursor-pointer p-6 text-blue-500 font-bold rounded-lg transition-all duration-300 hover:bg-white hover:text-blue-300"
+        >
+          <FontAwesomeIcon icon={faFilePdf} size="2x" />
+          <div className="mt-2">{isDragging ? 'Thả file vào đây' : 'Kéo thả file hoặc nhấn để chọn'}</div>
+        </label>
+      </div>
+    </>
+  );
+}
+
+function ViewPdf({ file }) {
+  const [numPages, setNumPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    if (file) {
+      setCurrentPage(1);
+    }
+  }, [file]);
+
+  return (
+    <div className="flex flex-col items-center justify-center relative">
+      <Document file={file} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
+        <Page pageNumber={currentPage} />
+      </Document>
+
+      <div className="fixed bottom-0 left-0 right-0 bg-white w-1/2 ml-120 py-2 z-2">
+        <Pagination
+          className="bg-white "
+          currentPage={currentPage}
+          totalPages={numPages}
+          setCurrentPage={setCurrentPage}
+        />
+      </div>
     </div>
   );
 }
