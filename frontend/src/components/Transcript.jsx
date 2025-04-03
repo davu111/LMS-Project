@@ -6,6 +6,9 @@ import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import Score from '../assets/Draft/student_scores.json';
 import SearchModal from './SearchModal';
 import '../styles/App.css';
+import axios from 'axios';
+
+const URL = 'http://localhost:3000/api';
 
 const types = [
   '15_minutes',
@@ -47,14 +50,33 @@ function Transcript() {
   };
 
   const handleImport = (selectedAssignments) => {
-    const updatedScores = [...scores];
-    selectedAssignments.forEach((assignment, idx) => {
-      scores.forEach((student, i) => {
-        updatedScores[i][selectedColumns[idx]] = assignment.scores[student.id] || 0;
-      });
+    // console.log(selectedAssignments);
+    const updatedScores = scores.map((student) => ({ ...student })); // Tạo bản sao mới của scores
+
+    const fetchPromises = selectedAssignments.map((assignment, idx) =>
+      axios.get(`${URL}/scores/getScores/${assignment._id}`).then((res) => {
+        updatedScores.forEach((student, i) => {
+          updatedScores[i] = {
+            ...updatedScores[i], // Đảm bảo mỗi student có một object mới
+            [selectedColumns[idx]]: parseFloat(res.data[0].score) / 10,
+          };
+        });
+      }),
+    );
+
+    Promise.all(fetchPromises).then(() => {
+      setScores(updatedScores); // Chỉ setScores sau khi tất cả request hoàn thành
+      setIsOpen(false);
     });
-    setScores(updatedScores);
-    setIsOpen(false);
+
+    // const updatedScores = [...scores];
+    // selectedAssignments.forEach((assignment, idx) => {
+    //   scores.forEach((student, i) => {
+    //     updatedScores[i][selectedColumns[idx]] = assignment.scores[student.id] || 0;
+    //   });
+    // });
+    // setScores(updatedScores);
+    // setIsOpen(false);
   };
 
   return (
