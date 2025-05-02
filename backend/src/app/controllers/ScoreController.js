@@ -10,6 +10,18 @@ class ScoreController {
                 res.status(500).json({ message: "Internal Server Error", error: error.message });
             });
     }
+
+    async getScoresByAssignment(req, res) {
+        try {
+          const assignmentId  = req.params.id;
+      
+          const scores = await Score.find({ assignment_id: assignmentId }).populate("student_id", "name");
+      
+          res.json(scores); // mỗi phần tử sẽ có student_id: { _id, name }
+        } catch (error) {
+          res.status(500).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = new ScoreController();

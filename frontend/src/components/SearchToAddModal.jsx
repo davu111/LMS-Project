@@ -43,7 +43,7 @@ function Body({ selectedCount, onImport }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [assignments, setAssignments] = useState([]);
-  const [selectedAssignments, setSelectedAssignments] = useState([]);
+  const [selectedAssignments, setSelectedAssignments] = useState(null);
 
   useEffect(() => {
     axios
@@ -55,6 +55,16 @@ function Body({ selectedCount, onImport }) {
   return (
     <>
       <div className="grid grid-cols-12 grid-rows-10 gap-4 px-8 py-4 h-full">
+        <button
+          onClick={() => onImport(selectedAssignments)}
+          disabled={selectedAssignments === null}
+          className={`text-xl font-bold row-span-1 col-span-2 p-2 cursor-pointer rounded bg-indigo-700 text-white transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 ${
+            selectedAssignments === null ? 'hidden' : ''
+          }`}
+        >
+          <FontAwesomeIcon icon={faCheck} className="mr-2" />
+          Done
+        </button>
         <input
           type="text"
           placeholder="Find your assignment"
@@ -221,12 +231,10 @@ function SelectDropDown({ filterKey, lists, selectedFilters, setSelectedFilters 
 
 function Table({
   assignments,
-  setAssignments,
   selectedFilters,
   currentPage,
   setTotalPages,
   setCurrentPage,
-  selectedCount,
   selectedAssignments,
   setSelectedAssignments,
 }) {
@@ -280,13 +288,7 @@ function Table({
   };
 
   const handleSelect = (assignment) => {
-    setSelectedAssignments((prev) => {
-      if (prev.find((select) => select._id === assignment._id))
-        return prev.filter((a) => a._id !== assignment._id);
-
-      if (prev.length < selectedCount) return [...prev, assignment];
-      return prev;
-    });
+    setSelectedAssignments(assignment);
   };
 
   useEffect(() => {
@@ -319,8 +321,8 @@ function Table({
           {paginateData.map((assignment) => (
             <tr
               key={assignment._id}
-              className={`border-t hover:bg-gray-100 transition group relative ${
-                selectedAssignments.find((a) => a._id === assignment._id) ? 'bg-gray-100' : ''
+              className={`border-t transition group relative ${
+                selectedAssignments === assignment ? 'bg-gray-300' : ''
               }`}
             >
               <td className="p-3 cursor-pointer hover:underline" onClick={() => handleSelect(assignment)}>
@@ -343,7 +345,7 @@ function Table({
   );
 }
 
-function SearchToAddModal({ onClose, onImport, selectedCount }) {
+function SearchToAddModal({ onClose, onImport }) {
   return (
     <motion.div
       className="fixed inset-0 flex items-center justify-center bg-black/10 z-10"
@@ -360,7 +362,7 @@ function SearchToAddModal({ onClose, onImport, selectedCount }) {
         transition={{ duration: 0.3, ease: 'easeOut' }}
         onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào nội dung
       >
-        <Body selectedCount={selectedCount} onImport={onImport} />
+        <Body onImport={onImport} />
       </motion.div>
     </motion.div>
   );

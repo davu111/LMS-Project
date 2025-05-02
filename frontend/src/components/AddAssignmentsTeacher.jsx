@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import SearchtoAddModal from './SearchToAddModal';
-import SearchModal from './SearchModal';
+import ScoreAssignment from './ScoreAssignment';
 
 function AddAssignmentsTeacher() {
-  return <AssignmentsCard />;
+  return <ScoreAssignment assignemntId={'660c1a1a1a1a1a1a1a1a1a01'} />;
 }
 
 function AssignmentsCard() {
@@ -28,6 +28,7 @@ function AssignmentsCard() {
 
   const onImport = (assignment) => {
     console.log(assignment);
+    assignments.push(assignment);
     setIsOpen(false);
   };
 
@@ -78,7 +79,7 @@ function AssignmentsCard() {
           </div>
         ))}
       </div>
-      {isOpen && <SearchModal onClose={() => setIsOpen(false)} onImport={onImport} selectedCount={1} />}
+      {isOpen && <SearchtoAddModal onClose={() => setIsOpen(false)} onImport={onImport} />}
     </div>
   );
 }
