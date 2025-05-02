@@ -10,6 +10,9 @@ const Question = new Schema({
         D: String
     },
     correct: String,
+
+    fileUrl: String,
+
     assignment_id: { type: Schema.Types.ObjectId, ref: "Assignment" },
 }, { timestamps: true });
 

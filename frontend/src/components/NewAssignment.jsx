@@ -84,6 +84,9 @@ function Body() {
   const [state, setState] = useState(NewAssignment);
 
   const handleSave = () => {
+    {
+      console.log(file);
+    }
     const filteredQuestions = questions.filter((q) => Object.keys(q).length > 0 && q.question.trim() !== '');
     if (!id) {
       axios
@@ -92,12 +95,14 @@ function Body() {
           console.log(res);
           const assignment_id = res.data._id;
 
-          const questionRequests = filteredQuestions.map((q) => {
-            return axios.post(`${URL}/questions/createQuestion`, {
-              ...q,
-              assignment_id,
+          if (file === null) {
+            const questionRequests = filteredQuestions.map((q) => {
+              return axios.post(`${URL}/questions/createQuestion`, {
+                ...q,
+                assignment_id,
+              });
             });
-          });
+          }
 
           return Promise.all(questionRequests);
         })
@@ -332,7 +337,7 @@ function DateStart({ state, setState }) {
     <input
       id="dateStart"
       type="datetime-local"
-      value={state['dateStart'].slice(0, 16)}
+      value={state['dateStart'] || ''.slice(0, 16)}
       min={new Date().toISOString().slice(0, 16)}
       onChange={(e) => {
         const date = new Date(e.target.value);

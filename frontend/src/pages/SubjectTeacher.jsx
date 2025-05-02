@@ -20,7 +20,8 @@ import logoSchool from '../assets/logo-school.svg';
 
 const Announcements = lazy(() => import('../components/Annoucements'));
 const Lessons = lazy(() => import('../components/Lessons'));
-const Assignments = lazy(() => import('../components/Assignments'));
+// const Assignments = lazy(() => import('../components/Assignments'));
+const AddAssignmentsTeacher = lazy(() => import('../components/AddAssignmentsTeacher'));
 const Notebook = lazy(() => import('../components/Annoucements'));
 const Statistics = lazy(() => import('../components/Annoucements'));
 const Transcript = lazy(() => import('../components/Transcript'));
@@ -106,7 +107,7 @@ function Tabs() {
         <Suspense fallback={<div>Loading...</div>}>
           {tab === 'announcements' && <Announcements />}
           {tab === 'lessons' && <Lessons />}
-          {tab === 'assignments' && <Assignments />}
+          {tab === 'assignments' && <AddAssignmentsTeacher />}
           {tab === 'notebook' && <Notebook />}
           {tab === 'statistics' && <Statistics />}
           {tab === 'transcript' && <Transcript />}

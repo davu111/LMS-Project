@@ -5,8 +5,10 @@ import About from './pages/About';
 import Profile from './pages/Profile';
 import Ranking from './pages/Ranking';
 import Class from './pages/Class';
+
 import AssignmentTeacher from './pages/AssignmentTeacher';
 import NewAssignment from './components/NewAssignment';
+import AddAssignmentsTeacher from './components/AddAssignmentsTeacher';
 
 // import Subject from "./pages/Subject";
 import { Suspense, lazy } from 'react';
