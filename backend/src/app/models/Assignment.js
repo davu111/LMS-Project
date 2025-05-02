@@ -10,6 +10,7 @@ const Assignment = new Schema({
     type: String,
     duration: String,
     status: String,
+    file: String,
 }, { timestamps: true });
 
 module.exports = mongoose.model("Assignment", Assignment);

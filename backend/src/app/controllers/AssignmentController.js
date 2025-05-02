@@ -28,6 +28,29 @@ class AssignmentController {
             .catch(next);
     }
 
+    // PUT /assignments/uploadFile/:id
+    async uploadFile(req, res, next) {
+        try {
+            const { file } = req.body; // base64 string
+            const { id } = req.params;
+    
+            const updatedAssignment = await Assignment.findByIdAndUpdate(
+                id,
+                { file },
+                { new: true }
+            );
+    
+            if (!updatedAssignment) {
+                return res.status(404).json({ message: 'Assignment not found' });
+            }
+    
+            res.json({ message: 'File uploaded successfully', assignment: updatedAssignment });
+        } catch (err) {
+            next(err);
+        }
+    }
+    
+
     // [DELETE] /assignments/:id
     deleteAssignment(req, res, next) {
         Assignment.findByIdAndDelete(req.params.id)

@@ -11,8 +11,6 @@ const Question = new Schema({
     },
     correct: String,
 
-    fileUrl: String,
-
     assignment_id: { type: Schema.Types.ObjectId, ref: "Assignment" },
 }, { timestamps: true });
 

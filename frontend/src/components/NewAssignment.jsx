@@ -52,7 +52,11 @@ function Body() {
         .get(`${URL}/assignments/getAssignment/${id}`)
         .then((res) => {
           console.log(res);
-          setState(res.data);
+          setState({
+            ...res.data,
+            dateStart: new Date(res.data.dateStart).toISOString().slice(0, 16),
+          });
+          setFile(res.data.file);
           axios.get(`${URL}/questions/getQuestion/${id}`).then((res) => {
             console.log(res);
             setQuestions(res.data);
@@ -78,15 +82,13 @@ function Body() {
     duration: durations[0],
     status: 'Draft',
     year: '',
+    file: '',
     dateStart: new Date().toISOString().slice(0, 16),
   };
   const [questions, setQuestions] = useState([newQuestion]);
   const [state, setState] = useState(NewAssignment);
 
   const handleSave = () => {
-    {
-      console.log(file);
-    }
     const filteredQuestions = questions.filter((q) => Object.keys(q).length > 0 && q.question.trim() !== '');
     if (!id) {
       axios
@@ -102,15 +104,26 @@ function Body() {
                 assignment_id,
               });
             });
-          }
+            return Promise.all(questionRequests);
+          } else {
+            const fileSizeMB = file.size / (1024 * 1024); // Convert byte to MB
 
-          return Promise.all(questionRequests);
-        })
-        .then((responses) => {
-          console.log(
-            'All questions created:',
-            responses.map((res) => res.data),
-          );
+            if (fileSizeMB > 16) {
+              alert(`File vượt quá giới hạn ${MAX_FILE_SIZE_MB}MB. Vui lòng chọn file nhỏ hơn.`);
+              return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64File = reader.result;
+              axios
+                .put(`${URL}/assignments/uploadFile/${assignment_id}`, {
+                  file: base64File,
+                })
+                .then((res) => console.log(res))
+                .catch((err) => console.error('Error:', err.response?.data || err.message));
+            };
+            reader.readAsDataURL(file);
+          }
         })
         .catch((err) => console.error('Error:', err.response?.data || err.message));
     } else {
@@ -120,20 +133,40 @@ function Body() {
           console.log(res);
           const assignment_id = res.data._id;
 
-          const questionRequests = filteredQuestions.map((q) => {
-            if (q._id) {
-              return axios.put(`${URL}/questions/updateQuestion/${q._id}`, {
-                ...q,
-              });
-            } else {
-              return axios.post(`${URL}/questions/createQuestion`, {
-                ...q,
-                assignment_id,
-              });
-            }
-          });
+          if (file === null) {
+            const questionRequests = filteredQuestions.map((q) => {
+              if (q._id) {
+                return axios.put(`${URL}/questions/updateQuestion/${q._id}`, {
+                  ...q,
+                });
+              } else {
+                return axios.post(`${URL}/questions/createQuestion`, {
+                  ...q,
+                  assignment_id,
+                });
+              }
+            });
 
-          return Promise.all(questionRequests);
+            return Promise.all(questionRequests);
+          } else {
+            const fileSizeMB = file.size / (1024 * 1024); // Convert byte to MB
+
+            if (fileSizeMB > 16) {
+              alert(`File vượt quá giới hạn ${MAX_FILE_SIZE_MB}MB. Vui lòng chọn file nhỏ hơn.`);
+              return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64File = reader.result;
+              axios
+                .put(`${URL}/assignments/uploadFile/${assignment_id}`, {
+                  file: base64File,
+                })
+                .then((res) => console.log(res))
+                .catch((err) => console.error('Error:', err.response?.data || err.message));
+            };
+            reader.readAsDataURL(file);
+          }
         })
         .then((responses) => {
           console.log(
@@ -189,11 +222,10 @@ function Body() {
             <FontAwesomeIcon className="mx-3 my-3" icon={faPlus} />
           </div>
         </>
+      ) : file ? (
+        <ViewPdf file={file} />
       ) : (
-        <>
-          {isShowing && <DragPdf setIsShowing={setIsShowing} setFile={setFile} />}
-          {file && <ViewPdf file={file} />}
-        </>
+        <>{isShowing && <DragPdf setIsShowing={setIsShowing} setFile={setFile} />}</>
       )}
       {isOpen && <Modal title="Save" onClose={() => setIsOpen(false)} handleSubmit={() => handleSave()} />}
     </div>
