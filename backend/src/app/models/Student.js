@@ -6,8 +6,8 @@ const Student = new Schema({
     email: String,
     password: String,
     role: String,
-    // class_id: { type: Schema.Types.ObjectId, ref: "Class" },
+    course_id: { type: Schema.Types.ObjectId, ref: "Course" },
     // teacher_id: { type: Schema.Types.ObjectId, ref: "User" },
-}, { timestamps: true });
+});
 
 module.exports = mongoose.model("Student", Student);

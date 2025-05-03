@@ -7,7 +7,8 @@ import SearchtoAddModal from './SearchToAddModal';
 import ScoreAssignment from './ScoreAssignment';
 
 function AddAssignmentsTeacher() {
-  return <ScoreAssignment assignemntId={'660c1a1a1a1a1a1a1a1a1a01'} />;
+  // return <ScoreAssignment courseId={'680853a95db6525d61aea7ca'} assignemntId={'660c1a1a1a1a1a1a1a1a1a01'} />;4
+  return <AssignmentsCard />;
 }
 
 function AssignmentsCard() {
