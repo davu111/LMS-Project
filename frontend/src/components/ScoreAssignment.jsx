@@ -6,7 +6,10 @@ import ImageModal from './ImageModal';
 
 const URL = 'http://localhost:3000/api';
 
-function ScoreAssignment({ courseId, assignemntId }) {
+function ScoreAssignment({ courseId, assignmentId }) {
+  {
+    console.log(assignmentId);
+  }
   const [students, setStudents] = useState([]);
   const [scores, setScores] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +29,7 @@ function ScoreAssignment({ courseId, assignemntId }) {
 
   useEffect(() => {
     axios
-      .get(`${URL}/scores/getScoresByAssignment/${assignemntId}`)
+      .get(`${URL}/scores/getScoresByAssignment/${assignmentId}`)
       .then((res) => {
         console.log(res);
         setScores(res.data);

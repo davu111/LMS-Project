@@ -1,21 +1,37 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import SearchtoAddModal from './SearchToAddModal';
+import Modal from './Modal';
 import ScoreAssignment from './ScoreAssignment';
 
+const URL = 'http://localhost:3000/api';
 const subjectId = '68196447c90cd9f85bc6f0bd';
+const courseId = '662f0d9023c8b8a8a1111111';
 
 function AddAssignmentsTeacher() {
-  //{subjecId}
-  // return <ScoreAssignment courseId={'680853a95db6525d61aea7ca'} assignemntId={'660c1a1a1a1a1a1a1a1a1a01'} />;4
-  return <AssignmentsCard subjectId={subjectId} />;
+  const [view, setView] = useState({ mode: 'list' }); // "list" hoặc "score"
+
+  const handleViewDetails = (courseId, assignmentId) => {
+    setView({ mode: 'score', courseId, assignmentId });
+  };
+
+  return (
+    <>
+      {view.mode === 'score' ? (
+        <ScoreAssignment courseId={view.courseId} assignmentId={view.assignmentId} />
+      ) : (
+        <AssignmentsCard subjectId={subjectId} onViewDetails={handleViewDetails} />
+      )}
+    </>
+  );
 }
 
-function AssignmentsCard({ subjectId }) {
+function AssignmentsCard({ subjectId, onViewDetails }) {
   // const assignments = [
   //   { id: 1, date: '1 day ago', title: 'Title' },
   //   { id: 2, date: '1 day ago', title: 'Title' },
@@ -28,10 +44,33 @@ function AssignmentsCard({ subjectId }) {
   //   { id: 9, date: '1 day ago', title: 'Title' },
   //   { id: 10, date: '1 day ago', title: 'Title' },
   // ];
-  const URL = 'http://localhost:3000/api';
   const [assignments, setAssignments] = useState([]);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const emptyAssignments = {
+    subjects: null,
+    title: '',
+    instructions: '',
+    assignment: null,
+    notes: '',
+    timeStart: toLocalDatetimeString(new Date()),
+    deadline: toLocalDatetimeString(new Date()),
+  };
+  const [selectedAssignments, setSelectedAssignments] = useState(emptyAssignments);
+
+  function toLocalDatetimeString(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // getMonth() trả 0-11
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
 
   useEffect(() => {
     axios
@@ -43,7 +82,7 @@ function AssignmentsCard({ subjectId }) {
       .catch((error) => {
         console.error('Error fetching subjects:', error);
       });
-  }, []);
+  }, [reloadKey]);
 
   const onImport = (assignmentSubject) => {
     console.log(assignmentSubject);
@@ -53,12 +92,24 @@ function AssignmentsCard({ subjectId }) {
       subjects: subjectId,
     };
 
-    axios
-      .post(`${URL}/assignment_subjects/createAssignmentSubject`, NewAssignmentSubject)
-      .then((res) => console.log(res));
+    axios.put(`${URL}/assignment_subjects/createAssignmentSubject`, NewAssignmentSubject).then((res) => {
+      console.log(res);
+      const savedAssignment = res.data;
+      setAssignments([...assignments, savedAssignment]);
+      setReloadKey((prev) => prev + 1);
+    });
 
-    assignments.push(NewAssignmentSubject);
     setIsOpen(false);
+  };
+
+  const handleDelete = () => {
+    axios
+      .delete(`${URL}/assignment_subjects/deleteAssignmentSubject/${isModalOpen}`)
+      .then((res) => {
+        console.log(res.data);
+        setAssignments((prev) => prev.filter((assignment) => assignment._id !== isModalOpen));
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -72,21 +123,42 @@ function AssignmentsCard({ subjectId }) {
         >
           <FontAwesomeIcon icon={faPlus} className="text-indigo-500 text-3xl" />
         </div>
-        {assignments.map((assignment) => (
+        {assignments.map((assignment, index) => (
           <div
-            key={assignment._id}
+            key={index}
             className="bg-white p-4 rounded-lg shadow-md min-w-56 max-w-56 flex flex-col gap-2 
             hover:shadow-xl transition-all duration-300 border border-transparent 
-            hover:border-indigo-500 hover:scale-105"
+            hover:border-indigo-500 hover:scale-105 group"
           >
             <div className="flex items-center justify-between text-sm">
-              <div className="text-gray-400 text-xs">{assignment.date}</div>
+              <div className="text-gray-400 text-xs">
+                {new Date(assignment.timeStart).toLocaleString('vi-VN', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })}
+              </div>
+              <div
+                className="flex gap-2 items-center text-red-200 border rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 hover:border-red-500 cursor-pointer transition duration-300 hover:text-red-500"
+                onClick={() => setIsModalOpen(assignment._id)}
+              >
+                <div>Delete</div>
+              </div>
               <div className="flex gap-2 items-center text-gray-400 border rounded px-2 py-1 text-xs hover:border-indigo-600 cursor-pointer transition duration-300 hover:text-indigo-600">
                 <div>Save</div>
                 <FontAwesomeIcon icon={faBookmark} />
               </div>
             </div>
-            <div className="font-medium">{assignment.title}</div>
+            <div
+              className="font-medium cursor-pointer hover:text-indigo-500"
+              onClick={() => {
+                console.log(assignment);
+                setSelectedAssignments(assignment);
+                setIsOpen(true);
+              }}
+            >
+              {assignment.title}
+            </div>
             <div className="text-xs inline-flex gap-2">
               <div className=" px-2 py-1 bg-rose-200 rounded-full text-rose-500">Math</div>
               <div className=" px-2 py-1 bg-emerald-200 rounded-full text-emerald-500">MCQ</div>
@@ -94,13 +166,22 @@ function AssignmentsCard({ subjectId }) {
             <hr className="text-gray-300 my-2" />
             <div className="flex items-center justify-between text-xs">
               <div className="flex gap-0 items-start flex-col">
-                <div className="text-sm font-medium">18/02/2024</div>
-                <div className="text-gray-400">08:00 AM</div>
+                <div className="text-sm font-medium">
+                  {new Date(assignment.deadline).toLocaleDateString('vi-VN')}
+                </div>
+                <div className="text-gray-400">
+                  {new Date(assignment.deadline).toLocaleTimeString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                  })}
+                </div>
               </div>
 
               <div
                 className=" cursor-pointer border border-indigo-600 text-indigo-600 px-2 py-1 rounded-lg text-xs hover:bg-indigo-600 hover:text-white transition duration-300
               "
+                onClick={() => onViewDetails(courseId, assignment._id)}
               >
                 View Details
               </div>
@@ -108,7 +189,21 @@ function AssignmentsCard({ subjectId }) {
           </div>
         ))}
       </div>
-      {isOpen && <SearchtoAddModal onClose={() => setIsOpen(false)} onImport={onImport} />}
+      {isOpen && (
+        <SearchtoAddModal
+          onClose={() => setIsOpen(false)}
+          onImport={onImport}
+          selectedAssignments={selectedAssignments}
+          setSelectedAssignments={setSelectedAssignments}
+        />
+      )}
+      {isModalOpen && (
+        <Modal
+          title={'Delete Assignment'}
+          onClose={() => setIsModalOpen(null)}
+          handleSubmit={() => handleDelete()}
+        />
+      )}
     </div>
   );
 }

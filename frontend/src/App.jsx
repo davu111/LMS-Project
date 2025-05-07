@@ -9,6 +9,7 @@ import Class from './pages/Class';
 import AssignmentTeacher from './pages/AssignmentTeacher';
 import NewAssignment from './components/NewAssignment';
 import AddAssignmentsTeacher from './components/AddAssignmentsTeacher';
+import ScoreAssignment from './components/ScoreAssignment';
 
 // import Subject from "./pages/Subject";
 import { Suspense, lazy } from 'react';
@@ -51,6 +52,7 @@ function App() {
                 </Suspense>
               }
             />
+            <Route path="/subject_teacher/assignments/score" element={<ScoreAssignment />} />
           </Routes>
         </div>
       </div>

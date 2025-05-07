@@ -29,7 +29,7 @@ const types = ['All type', 'MC', 'Essay'];
 
 const durations = ['All duration', '15 minutes', '30 minutes', 'Middle Term', 'Final Term'];
 
-function Body({ selectedCount, onImport }) {
+function Body({ onImport, selectedAssignments, setSelectedAssignments }) {
   function toLocalDatetimeString(date) {
     const pad = (n) => String(n).padStart(2, '0');
 
@@ -42,15 +42,6 @@ function Body({ selectedCount, onImport }) {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  const emptyAssignments = {
-    subjects: null,
-    title: '',
-    instructions: '',
-    assignment: null,
-    notes: '',
-    timeStart: toLocalDatetimeString(new Date()),
-    deadline: toLocalDatetimeString(new Date()),
-  };
   const [selectedFilters, setSelectedFilters] = useState({
     name: '',
     grade: [grades[0]],
@@ -64,7 +55,6 @@ function Body({ selectedCount, onImport }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [assignments, setAssignments] = useState([]);
-  const [selectedAssignments, setSelectedAssignments] = useState(emptyAssignments);
 
   useEffect(() => {
     axios
@@ -184,7 +174,6 @@ function Body({ selectedCount, onImport }) {
             currentPage={currentPage}
             setTotalPages={setTotalPages}
             setCurrentPage={setCurrentPage}
-            selectedCount={selectedCount}
             selectedAssignments={selectedAssignments}
             setSelectedAssignments={setSelectedAssignments}
           />
@@ -336,11 +325,11 @@ function Table({
     }));
   };
 
-  const handleSelect = (assignment) => {
+  const handleSelect = (assignmentId) => {
     setSelectedAssignments((prev) => {
       const newSelected = {
         ...prev,
-        assignment: assignment,
+        assignment: assignmentId,
       };
       return newSelected;
     });
@@ -377,10 +366,10 @@ function Table({
             <tr
               key={assignment._id}
               className={`border-t transition group relative ${
-                selectedAssignments.assignment === assignment ? 'bg-gray-300' : ''
+                selectedAssignments.assignment === assignment._id ? 'bg-gray-300' : ''
               }`}
             >
-              <td className="p-3 cursor-pointer hover:underline" onClick={() => handleSelect(assignment)}>
+              <td className="p-3 cursor-pointer hover:underline" onClick={() => handleSelect(assignment._id)}>
                 {assignment.name}
               </td>
               <td className="p-3">{assignment.grade}</td>
@@ -405,7 +394,7 @@ function DateStart({ selectedAssignments, setSelectedAssignments, toLocalDatetim
     <input
       id="dateStart"
       type="datetime-local"
-      value={selectedAssignments['timeStart'] || ''}
+      value={toLocalDatetimeString(new Date(selectedAssignments['timeStart'])) || ''}
       min={toLocalDatetimeString(new Date())}
       onChange={(e) => {
         const date = new Date(e.target.value);
@@ -418,6 +407,7 @@ function DateStart({ selectedAssignments, setSelectedAssignments, toLocalDatetim
           if (deadline && deadline < timeStart) {
             deadline = timeStart;
           }
+          console.log(deadline);
 
           return {
             ...prev,
@@ -436,7 +426,7 @@ function Deadline({ selectedAssignments, setSelectedAssignments, toLocalDatetime
     <input
       id="deadline"
       type="datetime-local"
-      value={selectedAssignments['deadline'] || ''}
+      value={toLocalDatetimeString(new Date(selectedAssignments['deadline'])) || ''}
       min={toLocalDatetimeString(
         new Date(Math.max(new Date(selectedAssignments.timeStart).getTime(), new Date().getTime())),
       )}
@@ -454,7 +444,7 @@ function Deadline({ selectedAssignments, setSelectedAssignments, toLocalDatetime
   );
 }
 
-function SearchToAddModal({ onClose, onImport }) {
+function SearchToAddModal({ onClose, onImport, selectedAssignments, setSelectedAssignments }) {
   return (
     <motion.div
       className="fixed inset-0 flex items-center justify-center bg-black/10 z-10"
@@ -471,7 +461,11 @@ function SearchToAddModal({ onClose, onImport }) {
         transition={{ duration: 0.3, ease: 'easeOut' }}
         onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào nội dung
       >
-        <Body onImport={onImport} />
+        <Body
+          onImport={onImport}
+          selectedAssignments={selectedAssignments}
+          setSelectedAssignments={setSelectedAssignments}
+        />
       </motion.div>
     </motion.div>
   );
