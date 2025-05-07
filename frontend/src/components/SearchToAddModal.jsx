@@ -30,6 +30,27 @@ const types = ['All type', 'MC', 'Essay'];
 const durations = ['All duration', '15 minutes', '30 minutes', 'Middle Term', 'Final Term'];
 
 function Body({ selectedCount, onImport }) {
+  function toLocalDatetimeString(date) {
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // getMonth() trả 0-11
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  const emptyAssignments = {
+    subjects: null,
+    title: '',
+    instructions: '',
+    assignment: null,
+    notes: '',
+    timeStart: toLocalDatetimeString(new Date()),
+    deadline: toLocalDatetimeString(new Date()),
+  };
   const [selectedFilters, setSelectedFilters] = useState({
     name: '',
     grade: [grades[0]],
@@ -43,7 +64,7 @@ function Body({ selectedCount, onImport }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [assignments, setAssignments] = useState([]);
-  const [selectedAssignments, setSelectedAssignments] = useState(null);
+  const [selectedAssignments, setSelectedAssignments] = useState(emptyAssignments);
 
   useEffect(() => {
     axios
@@ -55,11 +76,37 @@ function Body({ selectedCount, onImport }) {
   return (
     <>
       <div className="grid grid-cols-12 grid-rows-10 gap-4 px-8 py-4 h-full">
+        <input
+          id="assignmentName"
+          type="text"
+          placeholder="Assignment Name"
+          className="text-xl font-semibold mb-4 focus:outline-none col-span-6"
+          value={selectedAssignments.title}
+          onChange={(e) => setSelectedAssignments((prev) => ({ ...prev, title: e.target.value }))}
+        ></input>
+        <div className="col-start-7 col-span-2">
+          <DateStart
+            className="col-span-2"
+            selectedAssignments={selectedAssignments}
+            setSelectedAssignments={setSelectedAssignments}
+            toLocalDatetimeString={toLocalDatetimeString}
+          />
+        </div>
+        <div className="col-start-9 col-span-2">
+          <Deadline
+            selectedAssignments={selectedAssignments}
+            setSelectedAssignments={setSelectedAssignments}
+            toLocalDatetimeString={toLocalDatetimeString}
+          />
+        </div>
+
         <button
           onClick={() => onImport(selectedAssignments)}
-          disabled={selectedAssignments === null}
-          className={`text-xl font-bold row-span-1 col-span-2 p-2 cursor-pointer rounded bg-indigo-700 text-white transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 ${
-            selectedAssignments === null ? 'hidden' : ''
+          disabled={selectedAssignments.assignment === null}
+          className={`text-xl font-bold col-start-11 col-span-2 p-2 rounded text-white transition-all duration-300  ${
+            selectedAssignments.assignment === null
+              ? 'bg-indigo-200 cursor-not-allowed'
+              : 'bg-indigo-700 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 cursor-pointer'
           }`}
         >
           <FontAwesomeIcon icon={faCheck} className="mr-2" />
@@ -260,9 +307,11 @@ function Table({
       // console.log(selectedFilters.name);
       // console.log(assignment.name);
       // console.log(assignment.name.toLowerCase().includes(selectedFilters.name.toLowerCase()));
-      const matchesSearch = selectedFilters.name
-        ? assignment.name.toLowerCase().includes(selectedFilters.name.toLowerCase())
-        : true;
+
+      const matchesSearch =
+        selectedFilters.name && assignment.name
+          ? assignment.name.toLowerCase().includes(selectedFilters.name.toLowerCase())
+          : true;
 
       // console.log(matchesFilter, matchesSearch);
       return matchesFilter && matchesSearch;
@@ -288,7 +337,13 @@ function Table({
   };
 
   const handleSelect = (assignment) => {
-    setSelectedAssignments(assignment);
+    setSelectedAssignments((prev) => {
+      const newSelected = {
+        ...prev,
+        assignment: assignment,
+      };
+      return newSelected;
+    });
   };
 
   useEffect(() => {
@@ -322,7 +377,7 @@ function Table({
             <tr
               key={assignment._id}
               className={`border-t transition group relative ${
-                selectedAssignments === assignment ? 'bg-gray-300' : ''
+                selectedAssignments.assignment === assignment ? 'bg-gray-300' : ''
               }`}
             >
               <td className="p-3 cursor-pointer hover:underline" onClick={() => handleSelect(assignment)}>
@@ -342,6 +397,60 @@ function Table({
         <p className="text-center text-2xl mt-4 italic text-gray-400">No data found.</p>
       )}
     </div>
+  );
+}
+
+function DateStart({ selectedAssignments, setSelectedAssignments, toLocalDatetimeString }) {
+  return (
+    <input
+      id="dateStart"
+      type="datetime-local"
+      value={selectedAssignments['timeStart'] || ''}
+      min={toLocalDatetimeString(new Date())}
+      onChange={(e) => {
+        const date = new Date(e.target.value);
+        const formattedDate = toLocalDatetimeString(date);
+
+        setSelectedAssignments((prev) => {
+          const timeStart = formattedDate;
+          let deadline = prev.deadline;
+
+          if (deadline && deadline < timeStart) {
+            deadline = timeStart;
+          }
+
+          return {
+            ...prev,
+            timeStart,
+            deadline,
+          };
+        });
+      }}
+      className="w-full px-4 py-2 bg-white text-gray-700 rounded-lg shadow-md cursor-pointer hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+    />
+  );
+}
+
+function Deadline({ selectedAssignments, setSelectedAssignments, toLocalDatetimeString }) {
+  return (
+    <input
+      id="deadline"
+      type="datetime-local"
+      value={selectedAssignments['deadline'] || ''}
+      min={toLocalDatetimeString(
+        new Date(Math.max(new Date(selectedAssignments.timeStart).getTime(), new Date().getTime())),
+      )}
+      onChange={(e) => {
+        const date = new Date(e.target.value);
+        const formattedDate = toLocalDatetimeString(date);
+
+        setSelectedAssignments((prev) => ({
+          ...prev,
+          deadline: formattedDate,
+        }));
+      }}
+      className="w-full px-4 py-2 bg-white text-gray-700 rounded-lg shadow-md cursor-pointer hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+    />
   );
 }
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookmark, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -6,30 +7,57 @@ import { faBookmark, faPlus } from '@fortawesome/free-solid-svg-icons';
 import SearchtoAddModal from './SearchToAddModal';
 import ScoreAssignment from './ScoreAssignment';
 
+const subjectId = '68196447c90cd9f85bc6f0bd';
+
 function AddAssignmentsTeacher() {
+  //{subjecId}
   // return <ScoreAssignment courseId={'680853a95db6525d61aea7ca'} assignemntId={'660c1a1a1a1a1a1a1a1a1a01'} />;4
-  return <AssignmentsCard />;
+  return <AssignmentsCard subjectId={subjectId} />;
 }
 
-function AssignmentsCard() {
-  const assignments = [
-    { id: 1, date: '1 day ago', title: 'Title' },
-    { id: 2, date: '1 day ago', title: 'Title' },
-    { id: 3, date: '1 day ago', title: 'Title' },
-    { id: 4, date: '1 day ago', title: 'Title' },
-    { id: 5, date: '1 day ago', title: 'Title' },
-    { id: 6, date: '1 day ago', title: 'Title' },
-    { id: 7, date: '1 day ago', title: 'Title' },
-    { id: 8, date: '1 day ago', title: 'Title' },
-    { id: 9, date: '1 day ago', title: 'Title' },
-    { id: 10, date: '1 day ago', title: 'Title' },
-  ];
+function AssignmentsCard({ subjectId }) {
+  // const assignments = [
+  //   { id: 1, date: '1 day ago', title: 'Title' },
+  //   { id: 2, date: '1 day ago', title: 'Title' },
+  //   { id: 3, date: '1 day ago', title: 'Title' },
+  //   { id: 4, date: '1 day ago', title: 'Title' },
+  //   { id: 5, date: '1 day ago', title: 'Title' },
+  //   { id: 6, date: '1 day ago', title: 'Title' },
+  //   { id: 7, date: '1 day ago', title: 'Title' },
+  //   { id: 8, date: '1 day ago', title: 'Title' },
+  //   { id: 9, date: '1 day ago', title: 'Title' },
+  //   { id: 10, date: '1 day ago', title: 'Title' },
+  // ];
+  const URL = 'http://localhost:3000/api';
+  const [assignments, setAssignments] = useState([]);
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const onImport = (assignment) => {
-    console.log(assignment);
-    assignments.push(assignment);
+  useEffect(() => {
+    axios
+      .get(`${URL}/assignment_subjects/getAssignmentSubjectsBySubject/${subjectId}`)
+      .then((response) => {
+        console.log(response.data);
+        setAssignments(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching subjects:', error);
+      });
+  }, []);
+
+  const onImport = (assignmentSubject) => {
+    console.log(assignmentSubject);
+
+    const NewAssignmentSubject = {
+      ...assignmentSubject,
+      subjects: subjectId,
+    };
+
+    axios
+      .post(`${URL}/assignment_subjects/createAssignmentSubject`, NewAssignmentSubject)
+      .then((res) => console.log(res));
+
+    assignments.push(NewAssignmentSubject);
     setIsOpen(false);
   };
 
@@ -46,7 +74,7 @@ function AssignmentsCard() {
         </div>
         {assignments.map((assignment) => (
           <div
-            key={assignment.id}
+            key={assignment._id}
             className="bg-white p-4 rounded-lg shadow-md min-w-56 max-w-56 flex flex-col gap-2 
             hover:shadow-xl transition-all duration-300 border border-transparent 
             hover:border-indigo-500 hover:scale-105"

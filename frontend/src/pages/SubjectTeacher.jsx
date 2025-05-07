@@ -1,7 +1,7 @@
 import '../styles/App.css';
 import { motion } from 'framer-motion';
 import { Suspense, lazy } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faSort,

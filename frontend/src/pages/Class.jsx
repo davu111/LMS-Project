@@ -1,9 +1,12 @@
 import '../styles/App.css';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faFingerprint,
   faClock,
+  faPlus,
   faSort,
   faBroadcastTower,
   faGlobe,
@@ -13,86 +16,88 @@ import {
 
 import logoSchool from '../assets/logo-school.svg';
 
-const subjects = [
-  {
-    name: 'Mathematics',
-    color: 'amber',
-    exp: 3000,
-    grade: 'A+',
-  },
-  {
-    name: 'History',
-    color: 'pink',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Mandarin',
-    color: 'cyan',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Literature',
-    color: 'emerald',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Physics',
-    color: 'red',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Chemistry',
-    color: 'blue',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Biology',
-    color: 'amber',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Physics',
-    color: 'red',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Chemistry',
-    color: 'blue',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Biology',
-    color: 'amber',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Physics',
-    color: 'red',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Chemistry',
-    color: 'blue',
-    exp: 5000,
-    grade: 'A+',
-  },
-  {
-    name: 'Biology',
-    color: 'amber',
-    exp: 5000,
-    grade: 'A+',
-  },
-];
+// const subjects = [
+//   {
+//     name: 'Mathematics',
+//     color: 'amber',
+//     exp: 3000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'History',
+//     color: 'pink',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Mandarin',
+//     color: 'cyan',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Literature',
+//     color: 'emerald',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Physics',
+//     color: 'red',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Chemistry',
+//     color: 'blue',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Biology',
+//     color: 'amber',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Physics',
+//     color: 'red',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Chemistry',
+//     color: 'blue',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Biology',
+//     color: 'amber',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Physics',
+//     color: 'red',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Chemistry',
+//     color: 'blue',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+//   {
+//     name: 'Biology',
+//     color: 'amber',
+//     exp: 5000,
+//     grade: 'A+',
+//   },
+// ];
+
+const URL = 'http://localhost:3000/api';
 
 const colorClasses = {
   amber: {
@@ -157,16 +162,32 @@ function Body() {
 }
 
 function LeftSection() {
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    const teacher_id = '662f0d9023c8b8a8a2222222';
+    axios
+      .get(`${URL}/subjects/getSubjectsByTeacher/${teacher_id}`)
+      .then((response) => {
+        console.log(response.data);
+        setSubjects(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching subjects:', error);
+      });
+  }, []);
+
   return (
     <div className=" py-4 border-gray-200 rounded-lg bg-gray-50 flex justify-center items-center flex-col shadow-inner">
       <div className="flex gap-4 flex-wrap justify-center">
         {subjects.map((subject, index) => (
           <SubjectCard
             key={index}
+            id={subject._id}
             name={subject.name}
             color={subject.color}
             exp={subject.exp}
-            grade={subject.grade}
+            // grade={subject.grade}
           />
         ))}
       </div>
@@ -232,7 +253,7 @@ function SemesterCard() {
   );
 }
 
-function SubjectCard({ name, color, exp, grade }) {
+function SubjectCard({ id, name, color, exp, grade }) {
   const { bg, text } = colorClasses[color] || {
     bg: 'bg-gray-400',
     text: 'text-gray-400',
@@ -240,7 +261,7 @@ function SubjectCard({ name, color, exp, grade }) {
 
   return (
     // <Link to="/subject">
-    <Link to="/subject_teacher">
+    <Link to={`/subject_teacher`}>
       <div
         className="p-4 bg-white shadow-md rounded-lg flex gap-4 flex-col justify-items-start items-start min-w-56 hover:shadow-xl transition duration-300 cursor-pointer border border-transparent 
                hover:scale-105"

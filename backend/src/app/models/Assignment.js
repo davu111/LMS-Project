@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Assignment = new Schema({
-    name: String,
+    name: {type: String, default: 'Draft Assignment'},
     grade: String,
     subject: String,
     year: String, //May be notused
