@@ -57,6 +57,7 @@ function AssignmentsCard({ subjectId, onViewDetails }) {
     notes: '',
     timeStart: toLocalDatetimeString(new Date()),
     deadline: toLocalDatetimeString(new Date()),
+    change: true,
   };
   const [selectedAssignments, setSelectedAssignments] = useState(emptyAssignments);
 
@@ -152,8 +153,10 @@ function AssignmentsCard({ subjectId, onViewDetails }) {
             <div
               className="font-medium cursor-pointer hover:text-indigo-500"
               onClick={() => {
+                new Date(assignment.timeStart) <= new Date()
+                  ? setSelectedAssignments({ ...assignment, change: false })
+                  : setSelectedAssignments({ ...assignment, change: true });
                 console.log(assignment);
-                setSelectedAssignments(assignment);
                 setIsOpen(true);
               }}
             >

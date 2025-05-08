@@ -25,13 +25,15 @@ class ScoreController {
 
     // [PUT] /api/scores/updateScore/:id
     updateScore(req, res) {
-        Score.findByIdAndUpdate(req.params.id, req.body)
+        Score.findByIdAndUpdate(req.params.id, req.body, { new: true }) // <-- cần `{ new: true }` để lấy bản ghi sau cập nhật
+            .populate('student_id') // <-- populate lại student_id
             .then(score => res.json(score))
             .catch(error => {
                 console.error("Error updating score:", error);
                 res.status(500).json({ message: "Internal Server Error", error: error.message });
             });
     }
+    
 }
 
 module.exports = new ScoreController();

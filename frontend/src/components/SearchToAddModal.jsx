@@ -72,7 +72,10 @@ function Body({ onImport, selectedAssignments, setSelectedAssignments }) {
           placeholder="Assignment Name"
           className="text-xl font-semibold mb-4 focus:outline-none col-span-6"
           value={selectedAssignments.title}
-          onChange={(e) => setSelectedAssignments((prev) => ({ ...prev, title: e.target.value }))}
+          onChange={(e) =>
+            selectedAssignments.change &&
+            setSelectedAssignments((prev) => ({ ...prev, title: e.target.value }))
+          }
         ></input>
         <div className="col-start-7 col-span-2">
           <DateStart
@@ -91,10 +94,14 @@ function Body({ onImport, selectedAssignments, setSelectedAssignments }) {
         </div>
 
         <button
-          onClick={() => onImport(selectedAssignments)}
+          onClick={() =>
+            selectedAssignments.assignment !== null &&
+            selectedAssignments.change === true &&
+            onImport(selectedAssignments)
+          }
           disabled={selectedAssignments.assignment === null}
           className={`text-xl font-bold col-start-11 col-span-2 p-2 rounded text-white transition-all duration-300  ${
-            selectedAssignments.assignment === null
+            selectedAssignments.assignment === null || !selectedAssignments.change
               ? 'bg-indigo-200 cursor-not-allowed'
               : 'bg-indigo-700 hover:bg-white hover:text-indigo-700 hover:border-indigo-700 hover:border-2 cursor-pointer'
           }`}
@@ -369,7 +376,10 @@ function Table({
                 selectedAssignments.assignment === assignment._id ? 'bg-gray-300' : ''
               }`}
             >
-              <td className="p-3 cursor-pointer hover:underline" onClick={() => handleSelect(assignment._id)}>
+              <td
+                className="p-3 cursor-pointer hover:underline"
+                onClick={() => selectedAssignments.change && handleSelect(assignment._id)}
+              >
                 {assignment.name}
               </td>
               <td className="p-3">{assignment.grade}</td>
@@ -397,6 +407,7 @@ function DateStart({ selectedAssignments, setSelectedAssignments, toLocalDatetim
       value={toLocalDatetimeString(new Date(selectedAssignments['timeStart'])) || ''}
       min={toLocalDatetimeString(new Date())}
       onChange={(e) => {
+        if (!selectedAssignments.change) return;
         const date = new Date(e.target.value);
         const formattedDate = toLocalDatetimeString(date);
 
@@ -431,6 +442,7 @@ function Deadline({ selectedAssignments, setSelectedAssignments, toLocalDatetime
         new Date(Math.max(new Date(selectedAssignments.timeStart).getTime(), new Date().getTime())),
       )}
       onChange={(e) => {
+        if (!selectedAssignments.change) return;
         const date = new Date(e.target.value);
         const formattedDate = toLocalDatetimeString(date);
 

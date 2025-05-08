@@ -51,8 +51,8 @@ function ScoreAssignment({ courseId, assignmentId }) {
     axios
       .put(`${URL}/scores/updateScore/${score._id}`, score)
       .then((res) => {
-        console.log(res);
-        setScores((prev) => prev.map((s) => (s._id === score._id ? score : s)));
+        const updatedScore = res.data; // <-- lấy dữ liệu trả về từ server
+        setScores((prev) => prev.map((s) => (s._id === updatedScore._id ? updatedScore : s)));
       })
       .catch((err) => {
         console.log(err);
