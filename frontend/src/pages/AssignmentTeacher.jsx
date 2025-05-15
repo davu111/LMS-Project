@@ -311,7 +311,7 @@ function Table({ assignments, setAssignments, selectedFilters, currentPage, setT
       <table className="w-full border border-gray-300 shadow-lg">
         <thead className="text-indigo-700 sticky top-0 z-1 bg-white ring">
           <tr>
-            {['name', 'grade', 'subject', 'date', 'type', 'duration', 'status'].map((col) => (
+            {['name', 'grade', 'subject', 'date', 'type', 'duration'].map((col) => (
               <th
                 key={col}
                 onClick={() => sortData(col)}
@@ -336,9 +336,8 @@ function Table({ assignments, setAssignments, selectedFilters, currentPage, setT
               <td className="p-3">{assignment.subject}</td>
               <td className="p-3">{formatDate(assignment.dateStart || new Date())}</td>
               <td className="p-3">{assignment.type}</td>
-              <td className="p-3">{assignment.duration}</td>
-              <td className="p-3 relative">
-                {assignment.status}
+              <td className="p-3">
+                {assignment.duration}
                 <FontAwesomeIcon
                   icon={faTrashCan}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition text-red-300 hover:cursor-pointer hover:text-red-500"
@@ -348,6 +347,17 @@ function Table({ assignments, setAssignments, selectedFilters, currentPage, setT
                   }}
                 ></FontAwesomeIcon>
               </td>
+              {/* <td className="p-3 relative">
+                {assignment.status}
+                <FontAwesomeIcon
+                  icon={faTrashCan}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition text-red-300 hover:cursor-pointer hover:text-red-500"
+                  onClick={() => {
+                    setIsOpen(true);
+                    setDeleteId(assignment._id);
+                  }}
+                ></FontAwesomeIcon>
+              </td> */}
             </tr>
           ))}
         </tbody>

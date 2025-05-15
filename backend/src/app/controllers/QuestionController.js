@@ -1,4 +1,4 @@
-const Question = require("../models/Question");
+const Question = require("../models/question.model");
 
 class QuestionController {
     // GET /api/questions/getQuestions/:id

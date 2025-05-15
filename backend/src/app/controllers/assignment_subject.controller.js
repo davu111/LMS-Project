@@ -1,4 +1,4 @@
-const AssignmentSubject = require("../models/AssignmentSubject");
+const AssignmentSubject = require("../models/assignmentSubject.model");
 
 class AssignmentSubjectController {
     // [GET] /api/assignment_subjects/getAssignmentSubjectsBySubject/:id

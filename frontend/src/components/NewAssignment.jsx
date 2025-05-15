@@ -392,7 +392,8 @@ function ImportExcel({ setQuestions }) {
     if (!file) return;
 
     const fileType = file.name.split('.').pop().toLowerCase();
-    if (fileType == 'xlsx' && fileType == 'xls') {
+    console.log(fileType);
+    if (fileType === 'xlsx' || fileType === 'xls') {
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);

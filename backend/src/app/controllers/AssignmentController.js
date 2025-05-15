@@ -1,4 +1,4 @@
-const Assignment = require('../models/Assignment');
+const Assignment = require('../models/assignment.model');
 
 class AssignmentController {
     // [GET] /assignments
